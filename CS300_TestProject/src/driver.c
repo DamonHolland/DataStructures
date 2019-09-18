@@ -16,6 +16,6 @@
 int main()
 {
 	print42();
-	printf("hello");
+	printf("hey");
 	return EXIT_SUCCESS;
 }
