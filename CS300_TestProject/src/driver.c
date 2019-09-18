@@ -16,6 +16,5 @@
 int main()
 {
 	print42();
-	putf("HI");
 	return EXIT_SUCCESS;
 }
