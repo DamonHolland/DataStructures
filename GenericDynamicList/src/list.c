@@ -18,6 +18,10 @@ static void processError (const char *pszFunctionName, int errorCode)
 	exit (EXIT_FAILURE);
 }
 
+void lstLoadErrorMessages (){
+	LOAD_LIST_ERRORS;
+	return;
+}
 
 
 void lstCreate (ListPtr psList){
@@ -36,10 +40,11 @@ void lstTerminate (ListPtr psList){
 	return;
 }
 
-void lstLoadErrorMessages (){
-	LOAD_LIST_ERRORS;
-	return;
+
+int lstSize (const ListPtr psList){
+	return psList->numElements;
 }
+
 
 
 void lstInsertAfter (ListPtr psList, const void *pBuffer, int size){
@@ -48,6 +53,7 @@ void lstInsertAfter (ListPtr psList, const void *pBuffer, int size){
 		if(NULL == psList->psFirst){
 				//Add the element
 				psList->psFirst = (ListElement*)malloc(sizeof(ListElement));
+				psList->numElements++;
 				psList->psFirst->psNext = NULL;
 				psList->psCurrent = psList->psFirst;
 				psList->psLast = psList->psFirst;

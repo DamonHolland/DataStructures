@@ -22,7 +22,8 @@ int main(){
 
 	lstInsertAfter(&sTheList, &Data, sizeof(Data));
 
-	printf("Test");
+	printf("Size of list: %d", lstSize(&sTheList));
+
 	return EXIT_SUCCESS;
 
 }
