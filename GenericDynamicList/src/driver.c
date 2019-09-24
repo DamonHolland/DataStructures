@@ -14,10 +14,13 @@ Purpose:
 
 int main(){
 	List sTheList;
+	char Data;
 
 	lstLoadErrorMessages();
 
 	lstCreate(&sTheList);
+
+	lstInsertAfter(&sTheList, &Data, sizeof(Data));
 
 	printf("Test");
 	return EXIT_SUCCESS;

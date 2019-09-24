@@ -44,5 +44,17 @@ void lstLoadErrorMessages (){
 
 void lstInsertAfter (ListPtr psList, const void *pBuffer, int size){
 
+	if(NULL == psList->psCurrent){
+		if(NULL == psList->psFirst){
+				//Add the element
+				psList->psFirst = (ListElement*)malloc(sizeof(ListElement));
+				psList->psFirst->psNext = NULL;
+				psList->psCurrent = psList->psFirst;
+				psList->psLast = psList->psFirst;
+				//Add the data
+				psList->psCurrent->pData = (void*)malloc(size);
+				memcpy(psList->psCurrent->pData, pBuffer, size);
+			}
+	}
 	return;
 }
