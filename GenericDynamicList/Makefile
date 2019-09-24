@@ -18,13 +18,13 @@ bin:
 	mkdir -p bin
 
 bin/driver: bin/driver.o bin/example.o
-	${CC} ${CFLAGS} bin/driver.o bin/example.o -o bin/driver
+	${CC} ${CFLAGS} bin/driver.o bin/list.o -o bin/driver
 
-bin/driver.o: src/driver.c include/example.h
+bin/driver.o: src/driver.c include/list.h
 	${CC} ${CFLAGS} -c src/driver.c -o bin/driver.o
 	 
-bin/example.o: src/example.c include/example.h
-	${CC} ${CFLAGS} -c src/example.c -o bin/example.o
+bin/list.o: src/list.c include/list.h
+	${CC} ${CFLAGS} -c src/list.c -o bin/list.o
  	
 clean:
 	rm bin/*.o bin/driver

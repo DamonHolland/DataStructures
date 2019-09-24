@@ -13,6 +13,13 @@ Purpose:
 
 
 int main(){
+	List sTheList;
 
+	lstLoadErrorMessages();
+
+	lstCreate(&sTheList);
+
+	printf("Test");
 	return EXIT_SUCCESS;
+
 }
