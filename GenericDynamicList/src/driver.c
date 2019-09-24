@@ -14,16 +14,24 @@ Purpose:
 
 int main(){
 	List sTheList;
-	char Data;
+	char Data = 'A';
 
 	lstLoadErrorMessages();
 
 	lstCreate(&sTheList);
 
-	lstInsertAfter(&sTheList, &Data, sizeof(Data));
 
-	printf("Size of list: %d", lstSize(&sTheList));
+
+	lstInsertAfter(&sTheList, &Data, sizeof(Data));
+	printf("Size of list: %d\n", lstSize(&sTheList));
+
+	lstInsertAfter(&sTheList, &Data, sizeof(Data));
+	printf("Size of list: %d\n", lstSize(&sTheList));
+
+	lstInsertAfter(&sTheList, &Data, sizeof(Data));
+	printf("Size of list: %d\n", lstSize(&sTheList));
+
+
 
 	return EXIT_SUCCESS;
-
 }
