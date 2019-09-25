@@ -14,6 +14,16 @@ Purpose:
 
 char gszListErrors[NUMBER_OF_LIST_ERRORS][MAX_ERROR_LIST_CHARS];
 
+/**************************************************************************
+ Function: 	 	processError
+
+ Description: Process the error code passed to this routine
+
+ Parameters:	pszFunctionName - function causing the error
+ 	 	 	 	 	 	 	errorCode 	    - identifies the stack error
+
+ Returned:	 	None
+ *************************************************************************/
 static void processError (const char *pszFunctionName, int errorCode)
 {
 	printf ("Function: %s %s \n ", pszFunctionName,
@@ -25,6 +35,15 @@ static void processError (const char *pszFunctionName, int errorCode)
 //*************************************************************************
 // Allocation and Deallocation
 //*************************************************************************
+/**************************************************************************
+ Function: 	 	lstCreate
+
+ Description: Creates the list
+
+ Parameters:	psList - pointer to the list to create
+
+ Returned:	 	None
+ *************************************************************************/
 void lstCreate (ListPtr psList)
 {
 	psList->numElements = EMPTY_LIST;
@@ -39,6 +58,15 @@ void lstCreate (ListPtr psList)
 	return;
 }
 
+/**************************************************************************
+ Function: 	 	lstTerminate
+
+ Description: Terminate the list
+
+ Parameters:	psList              - Pointer to the list to terminate
+
+ Returned:	 	None
+ *************************************************************************/
 void lstTerminate (ListPtr psList)
 {
 	//Error Checking
@@ -68,6 +96,15 @@ void lstTerminate (ListPtr psList)
 	return;
 }
 
+/**************************************************************************
+ Function: 	 	lstLoadErrorMessages
+
+ Description: defines the constant strings that are used for error messages
+
+ Parameters:	none
+
+ Returned:	 	None
+ *************************************************************************/
 void lstLoadErrorMessages ()
 {
 	LOAD_LIST_ERRORS;
@@ -77,6 +114,15 @@ void lstLoadErrorMessages ()
 //*************************************************************************
 // Checking number of elements in list
 //*************************************************************************
+/**************************************************************************
+ Function: 	 	lstSize
+
+ Description: retrieves the size of the given list
+
+ Parameters:	psList              - Pointer to the list to return size of
+
+ Returned:	 	int                 - the size of the list
+ *************************************************************************/
 int lstSize (const ListPtr psList)
 {
 	//Error Checking
@@ -87,6 +133,15 @@ int lstSize (const ListPtr psList)
 	return psList->numElements;
 }
 
+/**************************************************************************
+ Function: 	 	lstIsEmpty
+
+ Description: Returns if the given list is empty
+
+ Parameters:	psList              - Pointer to the list to check empty
+
+ Returned:	 	bool                - If the list is empty or not
+ *************************************************************************/
 bool lstIsEmpty (const ListPtr psList)
 {
 	if(NULL == psList)
@@ -103,6 +158,18 @@ bool lstIsEmpty (const ListPtr psList)
 //*************************************************************************
 //													Peek Operations
 //*************************************************************************
+/**************************************************************************
+ Function: 	 	lstPeek
+
+ Description: Peeks the Data at the current element in the list
+
+ Parameters:	psList              - Pointer to the list to Peek
+ 	 	 	 	 	 	 	pBuffer             - Pointer to the buffer in which to store
+ 	 	 	 	 	 	 												the peeked data
+ 	 	 	 	 	 	 	size								- The byte size of the data
+
+ Returned:	 	void*               - Pointer of the Buffer given
+ *************************************************************************/
 void *lstPeek (const ListPtr psList, void *pBuffer, int size)
 {
 	//Error checking
@@ -130,6 +197,16 @@ void *lstPeek (const ListPtr psList, void *pBuffer, int size)
 //*************************************************************************
 //							Updating current
 //*************************************************************************
+/**************************************************************************
+ Function: 	 	lstFirst
+
+ Description: Sets the current element to the first element in the list
+
+ Parameters:	psList              - Pointer to the list which you are
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	switching elements
+
+ Returned:	 	None
+ *************************************************************************/
 void lstFirst (ListPtr psList)
 {
 	//Error Checking
@@ -147,6 +224,16 @@ void lstFirst (ListPtr psList)
 	return;
 }
 
+/**************************************************************************
+ Function: 	 	lstNext
+
+ Description: Sets the current element to the next element in the list
+
+ Parameters:	psList              - Pointer to the list which you are
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	switching elements
+
+ Returned:	 	None
+ *************************************************************************/
 void lstNext (ListPtr psList)
 {
 	//Error Checking
@@ -171,6 +258,18 @@ void lstNext (ListPtr psList)
 //*************************************************************************
 //									Insertion, Deletion, and Updating
 //*************************************************************************
+/**************************************************************************
+ Function: 	 	lstInsertAfter
+
+ Description: Inserts an element after the current element in the list
+
+ Parameters:	psList              - Pointer to the list which you are
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	inserting an element
+ 	 	 	 	 	 	 	pBuffer             - Pointer to the data you are inserting
+ 	 	 	 	 	 	 	size                - byte size of the data you are inserting
+
+ Returned:	 	None
+ *************************************************************************/
 void lstInsertAfter (ListPtr psList, const void *pBuffer, int size)
 {
 	//Error Checking
@@ -203,11 +302,13 @@ void lstInsertAfter (ListPtr psList, const void *pBuffer, int size)
 			{
 				processError("lstInsertAfter", ERROR_NO_CURRENT);
 			}
-			//If the List is NOT empty, check if the current element is the last element in the list
+			//If the List is NOT empty, check if the current element is the last
+			//element in the list
 			if(NULL == psList->psCurrent->psNext)
 			{
 				//Add a new tail
-				psList->psCurrent->psNext = (ListElement*)malloc(sizeof(ListElement));
+				psList->psCurrent->psNext =
+							(ListElement*)malloc(sizeof(ListElement));
 				psList->numElements++;
 				psList->psCurrent = psList->psCurrent->psNext;
 				psList->psCurrent->psNext = NULL;
