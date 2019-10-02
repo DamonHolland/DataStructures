@@ -27,7 +27,7 @@ bin/list.o: src/list.c include/list.h
 	${CC} ${CFLAGS} -c src/list.c -o bin/list.o
  	
 tarball: clean
-	tar czf ../cs300_2_holl9358.tar.gz ../GenericDynamicList
+	tar czf ../cs300_2B_holl9358.tar.gz ../GenericDynamicList
  	
 clean:
 	rm -rf bin/*.o bin/driver
