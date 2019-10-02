@@ -72,22 +72,22 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 int main(){
 	List sTheList;
 
-	//The expected data inserted into lists for testing
+	//The expected data inserted into lists
 	const char EXPECTED_CHAR = 'A';
 	const int EXPECTED_INT = 10;
 	const double EXPECTED_DOUBLE = 5.8;
 
-	//The values to reset buffers for testing
+	//The values to reset buffers
 	const char RESET_CHAR = 'Z';
 	const int RESET_INT = 0;
 	const double RESET_DOUBLE = 0;
 
-	//values to use for loop test
+	//The constant values to use for loop tests
 	const bool LOOP_TEST_RESET = true;
 	const bool LOOP_TEST_FAIL = false;
 	const int LOOP_TEST_AMOUNT = 100;
 
-	//The variables used as buffers for testing
+	//The variables used as buffers
 	char actualChar = RESET_CHAR;
 	int actualInt = RESET_INT;
 	double actualDouble = RESET_DOUBLE;
@@ -130,7 +130,7 @@ int main(){
 	//Check if data is correct
 	lstPeek(&sTheList, &actualInt, sizeof(actualInt));
 	assert(EXPECTED_INT == actualInt, "2nd element was inserted correctly",
-					 "2nd element was inserted incorrectly");
+				 "2nd element was inserted incorrectly");
 	//Check If Size is Correct
 	assert(2 == lstSize(&sTheList), "Size is correct after insertion",
 					 "Size is incorrect after insertion");
@@ -143,7 +143,7 @@ int main(){
 					"3rd element was inserted incorrectly");
 	//Check if the size is correct
 	assert(3 == lstSize(&sTheList), "Size is correct after insertion",
-						 "Size is incorrect after insertion");
+				 "Size is incorrect after insertion");
 	//Insert in a loop
 	//Reset testing variables
 	lstTerminate(&sTheList);
@@ -166,7 +166,7 @@ int main(){
 	}
 	//Print if the loop test was successful
 	assert(bLoopTest, "Elements were inserted correctly in loop",
-					"Elements added incorrectly in loop");
+				 "Elements added incorrectly in loop");
 
 
 	//********** Test lstSize **********
@@ -309,7 +309,7 @@ int main(){
 		//Make sure peeked data matches inserted data
 		if(actualInt != i)
 		{
-			bLoopTest = false;
+			bLoopTest = LOOP_TEST_FAIL;
 		}
 	}
 	//Print if the loop test was successful
@@ -467,8 +467,8 @@ int main(){
 	lstDeleteCurrent(&sTheList, &actualInt, sizeof(actualInt));
 	lstDeleteCurrent(&sTheList, &actualChar, sizeof(actualChar));
 	//Ensure the correct data was retrieved and list is now empty
-	assert((lstIsEmpty(&sTheList)) && (EXPECTED_CHAR == actualChar)
-					&& (EXPECTED_INT == actualInt),
+	assert((lstIsEmpty(&sTheList)) && (EXPECTED_CHAR == actualChar) &&
+					(EXPECTED_INT == actualInt),
 					"Correctly deleted two elements in list",
 					"Incorrectly deleted two elements in list");
 	//Test lstDeleteCurrent with current between elements
