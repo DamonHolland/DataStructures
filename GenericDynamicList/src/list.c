@@ -163,7 +163,15 @@ bool lstIsEmpty (const ListPtr psList)
 //*************************************************************************
 //												List Testing
 //*************************************************************************
+/**************************************************************************
+ Function: 	 	lstHasCurrent
 
+ Description: Returns if the list has a current element
+
+ Parameters:	psList              - Pointer to the list to check current
+
+ Returned:	 	bool                - If the list has a current element
+ *************************************************************************/
 bool lstHasCurrent (const ListPtr psList){
 	//Error Checking
 	if(NULL == psList)
@@ -171,9 +179,18 @@ bool lstHasCurrent (const ListPtr psList){
 		processError("lstHasCurrent", ERROR_INVALID_LIST);
 	}
 
-	return psList->psCurrent !=NULL;
+	return psList->psCurrent != NULL;
 }
 
+/**************************************************************************
+ Function: 	 	lstHasNext
+
+ Description: Returns if the list has a next element
+
+ Parameters:	psList              - Pointer to the list to check next
+
+ Returned:	 	bool                - If the list has a next element
+ *************************************************************************/
 bool lstHasNext (const ListPtr psList){
 	//Error Checking
 	if(NULL == psList)
@@ -182,7 +199,7 @@ bool lstHasNext (const ListPtr psList){
 	}
 
 
-	return psList->psCurrent->psNext !=NULL;
+	return psList->psCurrent->psNext != NULL;
 }
 
 //*************************************************************************
@@ -224,6 +241,18 @@ void *lstPeek (const ListPtr psList, void *pBuffer, int size)
 	return pBuffer;
 }
 
+/**************************************************************************
+ Function: 	 	lstPeekNext
+
+ Description: Peeks the Data at the next element in the list
+
+ Parameters:	psList              - Pointer to the list to peek next
+ 	 	 	 	 	 	 	pBuffer             - Pointer to the buffer in which to store
+ 	 	 	 	 	 	 												the peeked data
+ 	 	 	 	 	 	 	size								- The byte size of the data
+
+ Returned:	 	void*               - Pointer of the Buffer given
+ *************************************************************************/
 void *lstPeekNext (const ListPtr psList, void *pBuffer, int size){
 	//Error checking
 		if(NULL == psList)
@@ -311,6 +340,16 @@ void lstNext (ListPtr psList)
 	return;
 }
 
+/**************************************************************************
+ Function: 	 	lstLast
+
+ Description: Sets the current element to the last element in the list
+
+ Parameters:	psList              - Pointer to the list which you are
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	switching elements
+
+ Returned:	 	None
+ *************************************************************************/
 void lstLast (ListPtr psList){
 	//Error checking
 	if(NULL == psList)
@@ -417,6 +456,20 @@ void lstInsertAfter (ListPtr psList, const void *pBuffer, int size)
 	return;
 }
 
+/**************************************************************************
+ Function: 	 	lstDeleteCurrent
+
+ Description: Deletes the current element
+
+ Parameters:	psList              - Pointer to the list which you are
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	deleting current element
+ 	 	 	 	 	 	 	pBuffer             - Pointer to the buffer to retrieve the
+ 	 	 	 	 	 	 												deleted data
+ 	 	 	 	 	 	 	size                - byte size of the data you are
+ 	 	 	 	 	 	 												retrieving
+
+ Returned:	 	Pointer to the buffer that retrieves the data
+ *************************************************************************/
 void *lstDeleteCurrent (ListPtr psList, void *pBuffer, int size){
 
 	ListElementPtr pTempElement;
@@ -484,6 +537,18 @@ void *lstDeleteCurrent (ListPtr psList, void *pBuffer, int size){
 	return pBuffer;
 }
 
+/**************************************************************************
+ Function: 	 	lstInsertBefore
+
+ Description: Inserts an element before the current element in the list
+
+ Parameters:	psList              - Pointer to the list which you are
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	inserting an element
+ 	 	 	 	 	 	 	pBuffer             - Pointer to the data you are inserting
+ 	 	 	 	 	 	 	size                - byte size of the data you are inserting
+
+ Returned:	 	None
+ *************************************************************************/
 void lstInsertBefore (ListPtr psList, const void *pBuffer, int size){
 
 	ListElementPtr pTempElement;
@@ -536,6 +601,18 @@ void lstInsertBefore (ListPtr psList, const void *pBuffer, int size){
 	return;
 }
 
+/**************************************************************************
+ Function: 	 	lstUpdateCurrent
+
+ Description: Updates the data of the current element in the list
+
+ Parameters:	psList              - Pointer to the list which you are
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	updating an element
+ 	 	 	 	 	 	 	pBuffer             - Pointer to the data you are inserting
+ 	 	 	 	 	 	 	size                - byte size of the data you are inserting
+
+ Returned:	 	None
+ *************************************************************************/
 void lstUpdateCurrent (ListPtr psList, const void *pBuffer, int size){
 	//Error Checking
 		if(NULL == psList)
