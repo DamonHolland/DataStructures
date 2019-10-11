@@ -1,45 +1,45 @@
-/***************************************************************************
+/*************************************************************************
 File name:  pqueuedriver.c
 Author:     Damon Holland
 Date:       Oct 10, 2019
 Class:      CS300
 Assignment: GenericDynamicPriorityQ
 Purpose:    This file is the driver used to test the priority queue
-***************************************************************************/
+*************************************************************************/
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/pqueue.h"
 
-/**************************************************************************
+/*************************************************************************
  Function: 	 	success
 
  Description: print a success message
 
  Parameters:	szStr - the message to print
  Returned:	 	none
- *************************************************************************/
+ ************************************************************************/
 static void success (char * szStr)
 {
 	printf ("SUCCESS: %s\n", szStr);
 }
 
-/**************************************************************************
+/*************************************************************************
  Function: 	 	failure
 
  Description: print a failure message
 
  Parameters:	szStr - the message to print
  Returned:	 	none
- *************************************************************************/
+ ************************************************************************/
 static void failure (char * szStr)
 {
 	printf ("FAILURE: %s\n", szStr);
 	exit (EXIT_FAILURE);
 }
 
-/****************************************************************************
+/*************************************************************************
  Function: 	 	assert
 
  Description: if the expression is true, assert success; otherwise, assert
@@ -48,7 +48,7 @@ static void failure (char * szStr)
  Parameters:	szStr - the message to print
 
  Returned:	 	none
- ****************************************************************************/
+ ************************************************************************/
 static void assert (bool bExpression, char *pTrue, char *pFalse)
 {
 	if (bExpression)
@@ -61,7 +61,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 	}
 }
 
-/**************************************************************************
+/*************************************************************************
  Function: 	 	main
 
  Description: test all the functionality of the list
@@ -69,7 +69,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
  Parameters:	none
 
  Returned:	 	Exit Status
- *************************************************************************/
+ ************************************************************************/
 int main(){
 
 	PriorityQueue sTheQueue;

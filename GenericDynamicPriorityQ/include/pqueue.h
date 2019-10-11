@@ -1,4 +1,4 @@
-/**************************************************************************
+/*************************************************************************
  File name:		  pqueue.h
  Author:        CS, Pacific University
  Date:          10/18/17
@@ -7,7 +7,7 @@
  Purpose:       This file defines the constants, data structures, and
                 function prototypes for implementing a priority queue data
                 structure.
- *************************************************************************/
+*************************************************************************/
 
 #ifndef PQUEUE_H_
 #define PQUEUE_H_
@@ -15,9 +15,9 @@
 #include <stdbool.h>
 #include "../../GenericDynamicList/include/list.h"
 
-//*************************************************************************
+//************************************************************************
 // Constants
-//*************************************************************************
+//************************************************************************
 #define MAX_ERROR_PQ_CHARS 64
 
 enum {NO_PQ_ERROR = 0,
@@ -29,9 +29,9 @@ enum {NO_PQ_ERROR = 0,
 			ERROR_EMPTY_PQ}; // If this error name changes, change stmt below
 #define NUMBER_OF_PQ_ERRORS ERROR_EMPTY_PQ - NO_PQ_ERROR + 1
 
-//*************************************************************************
+//************************************************************************
 // Error Messages
-//*************************************************************************
+//************************************************************************
 #define LOAD_PQ_ERRORS strcpy(gszPQErrors[NO_PQ_ERROR], "No Error.");\
 strcpy(gszPQErrors[ERROR_NO_PQ_CREATE], "Error: No PQ Create.");\
 strcpy(gszPQErrors[ERROR_NO_PQ_TERMINATE], "Error: No PQ Terminate.");\
@@ -40,9 +40,9 @@ strcpy(gszPQErrors[ERROR_FULL_PQ], "Error: Full Priority Queue.");\
 strcpy(gszPQErrors[ERROR_NULL_PQ_PTR], "Error: NULL Pointer.");\
 strcpy(gszPQErrors[ERROR_EMPTY_PQ], "Error: Empty Priority Queue.");
 
-//*************************************************************************
+//************************************************************************
 // User-defined types
-//*************************************************************************
+//************************************************************************
 //typedef int (*cmpFunction) (const void *param1, const void *param2);
 
 typedef struct PriorityQueueElement
@@ -60,9 +60,9 @@ typedef struct PriorityQueue
 	//cmpFunction cmpFunct;
 } PriorityQueue;
 
-//*************************************************************************
+//************************************************************************
 //										Allocation and Deallocation
-//*************************************************************************
+//************************************************************************
 extern void pqueueCreate (PriorityQueuePtr psQueue
 													/*, 	cmpFunction cmpFunct */);
 // results: If PQ can be created, then PQ exists and is empty
@@ -77,9 +77,9 @@ extern void pqueueLoadErrorMessages ();
 // results:	Loads the error message strings for the error handler to use
 //					No error conditions
 
-//*************************************************************************
+//************************************************************************
 //									Checking number of elements in priority queue
-//*************************************************************************
+//************************************************************************
 
 extern int pqueueSize (const PriorityQueuePtr psQueue);
 // results: Returns the number of elements in the PQ
@@ -90,9 +90,9 @@ extern bool pqueueIsEmpty (const PriorityQueuePtr psQueue);
 // 					error code priority: ERROR_INVALID_PQ
 
 
-//*************************************************************************
+//************************************************************************
 //									Inserting and retrieving values
-//*************************************************************************
+//************************************************************************
 
 extern void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 										int size, int priority);
@@ -111,9 +111,9 @@ extern void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
 //					error code priority: ERROR_INVALID_PQ, ERROR_NULL_PQ_PTR,
 //															 ERROR_EMPTY_PQ
 
-//*************************************************************************
+//************************************************************************
 //													Peek Operations
-//*************************************************************************
+//************************************************************************
 
 extern void *pqueuePeek (PriorityQueuePtr psQueue, void *pBuffer, int size,
 								 int *priority);

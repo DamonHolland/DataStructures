@@ -34,3 +34,5 @@ tarball: clean
  	
 clean:
 	rm -rf bin/*.o bin/pqueuedriver
+	cd ../GenericDynamicList; make clean
+	
