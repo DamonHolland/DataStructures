@@ -1,10 +1,10 @@
 /***************************************************************************
-File name:  driver.c
-Author:     holl9358
+File name:  listdriver.c
+Author:     Damon Holland
 Date:       Sep 19, 2019
 Class:      CS300
-Assignment: 
-Purpose:    
+Assignment: Generic Dynamic List
+Purpose:    The driver used to test list functions
 ***************************************************************************/
 
 #include <stdio.h>

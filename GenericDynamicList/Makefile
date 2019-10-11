@@ -12,16 +12,16 @@ CFLAGS=-Wall -g
 
 .PHONY: all clean
 
-all: bin bin/driver
+all: bin bin/listdriver
 
 bin: 
 	mkdir -p bin
 
-bin/driver: bin/driver.o bin/list.o
-	${CC} ${CFLAGS} bin/driver.o bin/list.o -o bin/driver
+bin/listdriver: bin/listdriver.o bin/list.o
+	${CC} ${CFLAGS} bin/listdriver.o bin/list.o -o bin/listdriver
 
-bin/driver.o: src/driver.c include/list.h
-	${CC} ${CFLAGS} -c src/driver.c -o bin/driver.o
+bin/listdriver.o: src/listdriver.c include/list.h
+	${CC} ${CFLAGS} -c src/listdriver.c -o bin/listdriver.o
 	 
 bin/list.o: src/list.c include/list.h
 	${CC} ${CFLAGS} -c src/list.c -o bin/list.o
@@ -30,4 +30,4 @@ tarball: clean
 	tar czf ../cs300_2B_holl9358.tar.gz ../GenericDynamicList
  	
 clean:
-	rm -rf bin/*.o bin/driver
+	rm -rf bin/*.o bin/listdriver

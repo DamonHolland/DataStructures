@@ -4,7 +4,7 @@ Author:     Damon Holland
 Date:       Sep 19, 2019
 Class:      CS300
 Assignment: Generic Dynamic List
-Purpose:    
+Purpose:    Implement the list functions
 ***************************************************************************/
 
 #include "stdio.h"
