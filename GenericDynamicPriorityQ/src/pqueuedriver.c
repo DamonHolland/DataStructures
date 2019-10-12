@@ -70,12 +70,14 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 
  Returned:	 	Exit Status
  ************************************************************************/
-int main(){
+int main()
+{
 
 	PriorityQueue sTheQueue;
 
 
-	assert(true, "Program Builds Successfully!", "Program Build Failed");
+
+	assert (true, "Program Builds Successfully!", "Program Build Failed");
 
 	return EXIT_SUCCESS;
 }
