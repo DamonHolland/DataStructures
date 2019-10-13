@@ -17,15 +17,13 @@ all: bin bin/pqueuedriver
 bin: 
 	mkdir -p bin
 
-bin/pqueuedriver: bin/pqueuedriver.o bin/pqueue.o \
-	../GenericDynamicList/bin/list.o
-	${CC} ${CFLAGS} bin/pqueuedriver.o bin/pqueue.o -o bin/pqueuedriver
+bin/pqueuedriver: bin/pqueuedriver.o bin/pqueue.o ../GenericDynamicList/bin/list.o
+	${CC} ${CFLAGS} bin/pqueuedriver.o bin/pqueue.o ../GenericDynamicList/bin/list.o -o bin/pqueuedriver
 
-bin/pqueuedriver.o: src/pqueuedriver.c include/pqueue.h
+bin/pqueuedriver.o: src/pqueuedriver.c include/pqueue.h ../GenericDynamicList/include/list.h 
 	${CC} ${CFLAGS} -c src/pqueuedriver.c -o bin/pqueuedriver.o
 	 
-bin/pqueue.o: src/pqueue.c include/pqueue.h \
-	../GenericDynamicList/include/list.h
+bin/pqueue.o: src/pqueue.c include/pqueue.h ../GenericDynamicList/include/list.h
 	${CC} ${CFLAGS} -c src/pqueue.c -o bin/pqueue.o
 	
 ../GenericDynamicList/bin/list.o:

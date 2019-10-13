@@ -37,7 +37,7 @@
                             							
                             <targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.1145764194" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
                             							
-                            <builder buildPath="${workspace_loc:/GenericDynamicList}/Debug" id="cdt.managedbuild.target.gnu.builder.exe.debug.1628979610" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
+                            <builder buildPath="${workspace_loc:/GenericDynamicList}/Debug" id="cdt.managedbuild.target.gnu.builder.exe.debug.1628979610" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
                             							
                             <tool id="cdt.managedbuild.tool.gnu.archiver.base.1165680334" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
                             							
@@ -228,5 +228,21 @@
     <storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
     	
     <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+    	
+    <storageModule moduleId="refreshScope" versionNumber="2">
+        		
+        <configuration configurationName="Debug">
+            			
+            <resource resourceType="PROJECT" workspacePath="/GenericDynamicList"/>
+            		
+        </configuration>
+        		
+        <configuration configurationName="Release">
+            			
+            <resource resourceType="PROJECT" workspacePath="/GenericDynamicList"/>
+            		
+        </configuration>
+        	
+    </storageModule>
     
 </cproject>

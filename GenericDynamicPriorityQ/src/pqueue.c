@@ -11,6 +11,8 @@ Purpose:    This file implements the functions for the Priority Queue
 #include "stdio.h"
 #include "../include/pqueue.h"
 
+char gszPQErrors[NUMBER_OF_LIST_ERRORS][MAX_ERROR_LIST_CHARS];
+
 
 //************************************************************************
 //										Allocation and Deallocation
@@ -21,9 +23,8 @@ Purpose:    This file implements the functions for the Priority Queue
 
 void pqueueLoadErrorMessages ()
 {
-	//LOAD_LIST_ERRORS;
-	//LOAD_PQ_ERRORS;
-
+	lstLoadErrorMessages ();
+	LOAD_PQ_ERRORS;
 	return;
 }
 

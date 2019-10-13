@@ -56,7 +56,7 @@ void lstCreate (ListPtr psList)
 	psList->psCurrent = psList->psFirst = psList->psLast = NULL;
 
 	//Error Checking
-	if ((NULL == psList) || !lstIsEmpty(psList))
+	if ((NULL == psList) || !lstIsEmpty (psList))
 	{
 		processError ("lstCreate", ERROR_NO_LIST_CREATE);
 	}

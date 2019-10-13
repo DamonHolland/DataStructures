@@ -7,7 +7,6 @@ Assignment: GenericDynamicPriorityQ
 Purpose:    This file is the driver used to test the priority queue
 *************************************************************************/
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/pqueue.h"
@@ -64,7 +63,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 /*************************************************************************
  Function: 	 	main
 
- Description: test all the functionality of the list
+ Description: Test all the functionality of the Priority Queue
 
  Parameters:	none
 
@@ -73,8 +72,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 int main()
 {
 
-	PriorityQueue sTheQueue;
-
+	pqueueLoadErrorMessages ();
 
 
 	assert (true, "Program Builds Successfully!", "Program Build Failed");
