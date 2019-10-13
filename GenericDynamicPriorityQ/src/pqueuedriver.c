@@ -71,11 +71,20 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
  ************************************************************************/
 int main()
 {
+	PriorityQueue sTheQueue;
 
 	pqueueLoadErrorMessages ();
 
+	//******************** Test pqueueCreate ********************
+	pqueueCreate (&sTheQueue);
+	//Ensure the list is initially empty
+	assert (pqueueIsEmpty (&sTheQueue), "PQ is empty after creation",
+					"PQ is NOT empty after creation");
 
-	assert (true, "Program Builds Successfully!", "Program Build Failed");
+
+	//******************** Test pqueueSize ********************
+
+
 
 	return EXIT_SUCCESS;
 }
