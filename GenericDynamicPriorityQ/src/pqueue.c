@@ -51,6 +51,7 @@ void pqueueCreate (PriorityQueuePtr psQueue /*, 	cmpFunction cmpFunct */)
 
 void pqueueTerminate (PriorityQueuePtr psQueue)
 {
+	//CHANGE THIS SO IT WALKS THE LIST AND FREES DATA WITHIN THE LIST FIRST
 	lstTerminate (&psQueue->sTheList);
 	return;
 }
@@ -109,7 +110,7 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 	//Create an element and fill with the given information
 	newPQElement.priority = priority;
 	newPQElement.pData = (void*)malloc (size);
-	memcpy (newPQElement.pData, pBuffer, size);
+	memcpy (&newPQElement.pData, pBuffer, size);
 
 	//Now add the element to the list
 	//If the queue is empty, just add the element as the first

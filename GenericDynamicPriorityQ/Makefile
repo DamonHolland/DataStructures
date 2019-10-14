@@ -38,7 +38,8 @@ valgrind: bin/pqueuedriver
   --show-leak-kinds=all bin/pqueuedriver
  	
 tarball: clean
-	tar czf ../cs300_3_holl9358.tar.gz ../GenericDynamicPriorityQ
+	tar czf ../cs300_3_holl9358.tar.gz ../GenericDynamicPriorityQ \
+	../GenericDynamicList
  	
 clean:
 	rm -rf bin/*.o bin/pqueuedriver
