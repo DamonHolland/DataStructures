@@ -153,6 +153,34 @@ int main()
 					"pqueueSize returns correct value when adding many elements",
 					"pqueueSize returns incorrect value when adding many elements");
 
+	//******************** Test pqueueIsEmpty ********************
+	//Reset variables used for testing
+	pqueueTerminate(&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	//Ensure pqueueIsEmpty is true after creation
+	assert (pqueueIsEmpty (&sTheQueue),
+					"pqueueIsEmpty returns true after creation",
+					"pqueueIsEmpty DOES NOT return true after creation");
+	//Test queueIsEmpty within a loop
+	//Reset Variables for loop test;
+	pqueueTerminate(&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	bLoopTest = bLOOP_TEST_RESET;
+	//Add multiple elements to queue and ensure pqueueIsEmpty returns
+	//false after each add
+	for (i = 1; i <= LOOP_AMOUNT_MEDIUM; i++)
+	{
+		pqueueEnqueue (&sTheQueue, &EXPECTED_INT, sizeof (EXPECTED_INT),
+									 MEDIUM_PRIORITY);
+		if (pqueueIsEmpty (&sTheQueue))
+		{
+			bLoopTest = bLOOP_TEST_FAILED;
+		}
+	}
+	assert (bLoopTest,
+					"pqueueIsEmpty is false with multiple elements added",
+					"pqueueIsEmpty is NOT false with multiple elements added");
+
 
 	//******************** Test pqueueTerminate ********************
 	pqueueTerminate(&sTheQueue);
