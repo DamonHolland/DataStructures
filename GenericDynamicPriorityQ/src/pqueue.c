@@ -51,8 +51,23 @@ void pqueueCreate (PriorityQueuePtr psQueue /*, 	cmpFunction cmpFunct */)
 
 void pqueueTerminate (PriorityQueuePtr psQueue)
 {
-	//CHANGE THIS SO IT WALKS THE LIST AND FREES DATA WITHIN THE LIST FIRST
-	lstTerminate (&psQueue->sTheList);
+	PriorityQueueElementPtr currentElement;
+
+	if (!pqueueIsEmpty (psQueue))
+	{
+		lstFirst (&psQueue->sTheList);
+		currentElement = psQueue->sTheList.psCurrent->pData;
+		free (currentElement->pData);
+		while (NULL != psQueue->sTheList.psCurrent->psNext)
+		{
+			lstNext (&psQueue->sTheList);
+			currentElement = psQueue->sTheList.psCurrent->pData;
+			free (currentElement->pData);
+		}
+
+		lstTerminate (&psQueue->sTheList);
+	}
+
 	return;
 }
 
@@ -110,7 +125,7 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 	//Create an element and fill with the given information
 	newPQElement.priority = priority;
 	newPQElement.pData = (void*)malloc (size);
-	memcpy (&newPQElement.pData, pBuffer, size);
+	memcpy (newPQElement.pData, pBuffer, size);
 
 	//Now add the element to the list
 	//If the queue is empty, just add the element as the first
@@ -132,10 +147,19 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 			lstNext (&psQueue->sTheList);
 			currentPQElement = psQueue->sTheList.psCurrent->pData;
 		}
-
-		//Then insert the new element before the current element
-		lstInsertBefore (&psQueue->sTheList, &newPQElement,
-										 sizeof (newPQElement));
+		//If the list reached the end before finding a lower priority,
+		//add the element to the end
+		if (NULL == psQueue->sTheList.psCurrent->psNext)
+		{
+			lstInsertAfter (&psQueue->sTheList, &newPQElement,
+											sizeof (newPQElement));
+		}
+		//else, add it before the element with the lower priority
+		else
+		{
+			lstInsertBefore (&psQueue->sTheList, &newPQElement,
+											 sizeof (newPQElement));
+		}
 	}
 
 	return;

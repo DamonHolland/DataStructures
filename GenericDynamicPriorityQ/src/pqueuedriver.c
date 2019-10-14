@@ -121,7 +121,7 @@ int main()
 
 	//******************** Test pqueueSize ********************
 	//Reset variables used for testing
-	pqueueTerminate(&sTheQueue);
+	pqueueTerminate (&sTheQueue);
 	pqueueCreate (&sTheQueue);
 	//Ensure the size is 0 after creation
 	assert (pqueueSize (&sTheQueue) == 0,
@@ -135,7 +135,7 @@ int main()
 					"pqueueSize DOES NOT return 1 after adding 1 element");
 	//Test queue size within a loop
 	//Reset Variables for loop test;
-	pqueueTerminate(&sTheQueue);
+	pqueueTerminate (&sTheQueue);
 	pqueueCreate (&sTheQueue);
 	bLoopTest = bLOOP_TEST_RESET;
 	//Add multiple elements to queue and ensure pqueueSize returns
@@ -155,7 +155,7 @@ int main()
 
 	//******************** Test pqueueIsEmpty ********************
 	//Reset variables used for testing
-	pqueueTerminate(&sTheQueue);
+	pqueueTerminate (&sTheQueue);
 	pqueueCreate (&sTheQueue);
 	//Ensure pqueueIsEmpty is true after creation
 	assert (pqueueIsEmpty (&sTheQueue),
@@ -163,7 +163,7 @@ int main()
 					"pqueueIsEmpty DOES NOT return true after creation");
 	//Test queueIsEmpty within a loop
 	//Reset Variables for loop test;
-	pqueueTerminate(&sTheQueue);
+	pqueueTerminate (&sTheQueue);
 	pqueueCreate (&sTheQueue);
 	bLoopTest = bLOOP_TEST_RESET;
 	//Add multiple elements to queue and ensure pqueueIsEmpty returns
@@ -183,8 +183,20 @@ int main()
 
 
 	//******************** Test pqueueTerminate ********************
-	pqueueTerminate(&sTheQueue);
-
+	//Reset variables used for testing
+	pqueueTerminate (&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	//Add a few elements to the queue
+	for (i = 1; i <= LOOP_AMOUNT_MEDIUM; i++)
+	{
+	pqueueEnqueue (&sTheQueue, &EXPECTED_INT, sizeof (EXPECTED_INT),
+								 MEDIUM_PRIORITY);
+	}
+	//Terminate the queue and ensure the queue is now empty
+	pqueueTerminate (&sTheQueue);
+	assert (pqueueIsEmpty (&sTheQueue),
+					"Queue is empty after termination",
+					"Queue is NOT empty after termination");
 
 
 
