@@ -49,7 +49,11 @@ void pqueueCreate (PriorityQueuePtr psQueue /*, 	cmpFunction cmpFunct */)
 	return;
 }
 
-//void pqueueTerminate (PriorityQueuePtr psQueue);
+void pqueueTerminate (PriorityQueuePtr psQueue)
+{
+	lstTerminate (&psQueue->sTheList);
+	return;
+}
 
 void pqueueLoadErrorMessages ()
 {
@@ -86,8 +90,55 @@ bool pqueueIsEmpty (const PriorityQueuePtr psQueue)
 //************************************************************************
 //									Inserting and retrieving values
 //************************************************************************
-//void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
-//										int size, int priority);
+void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
+										int size, int priority)
+{
+	PriorityQueueElement newPQElement;
+	PriorityQueueElementPtr currentPQElement;
+
+	//Error Checking
+	if (NULL == psQueue)
+	{
+		processError ("pqueueEnqueue", ERROR_INVALID_PQ);
+	}
+	if (NULL == pBuffer)
+	{
+		processError ("pqueueEnqueue", ERROR_NULL_PQ_PTR);
+	}
+
+	//Create an element and fill with the given information
+	newPQElement.priority = priority;
+	newPQElement.pData = (void*)malloc (size);
+	memcpy (newPQElement.pData, pBuffer, size);
+
+	//Now add the element to the list
+	//If the queue is empty, just add the element as the first
+	if (pqueueIsEmpty (psQueue))
+	{
+		lstInsertAfter (&psQueue->sTheList, &newPQElement,
+										 sizeof (newPQElement));
+	}
+	else
+	{
+		//If the queue is not empty, move the current element in the list to
+		//the first element with a lower priority than the data being added
+		//or to the end of the list, whichever is first
+		lstFirst (&psQueue->sTheList);
+		currentPQElement = psQueue->sTheList.psCurrent->pData;
+		while ((currentPQElement->priority <= newPQElement.priority) &&
+						(NULL != psQueue->sTheList.psCurrent->psNext))
+		{
+			lstNext (&psQueue->sTheList);
+			currentPQElement = psQueue->sTheList.psCurrent->pData;
+		}
+
+		//Then insert the new element before the current element
+		lstInsertBefore (&psQueue->sTheList, &newPQElement,
+										 sizeof (newPQElement));
+	}
+
+	return;
+}
 
 //void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
 //														int size, int  *pPriority);
