@@ -96,7 +96,7 @@ int main()
 	const int LOOP_AMOUNT_LOW = 10;
 	const int LOOP_AMOUNT_MEDIUM = 50;
 	const int LOOP_AMOUNT_HIGH = 200;
-	const int LOOP_AMOUNT_STRESS = 10000;
+	const int LOOP_AMOUNT_STRESS = 1000000;
 
 	//Iterator to be used for loop testing
 	int i = 0;
@@ -250,12 +250,12 @@ int main()
 	actualInt = RESET_INT;
 	bLoopTest = bLOOP_TEST_RESET;
 	//Add a very large amount of items to the queue
-	for (i = 0; i <= LOOP_AMOUNT_STRESS; i++)
+	for (i = LOOP_AMOUNT_STRESS; i <= 0; i--)
 	{
 		pqueueEnqueue (&sTheQueue, &i, sizeof (i), i);
 	}
 	//Dequeue to test all data added
-	for (i = 0; i <= LOOP_AMOUNT_STRESS; i++)
+	for (i = LOOP_AMOUNT_STRESS; i <= 0; i--)
 	{
 		pqueueDequeue (&sTheQueue, &actualInt, sizeof (actualInt),
 									 &actualPriority);
@@ -265,11 +265,55 @@ int main()
 		}
 	}
 	assert (bLoopTest,
-					"Many items added to queue correctly",
-					"Many items NOT added to queue correctly");
+					"Many elements added to queue correctly",
+					"Many elements NOT added to queue correctly");
 
+	//******************** Test pqueueDequeue ********************
+	//Reset variables used for testing
+	pqueueTerminate (&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	actualPriority = RESET_PRIORITY;
+	actualInt = RESET_INT;
+	actualChar = RESET_CHAR;
+	bActualBool = bRESET_BOOL;
+	bLoopTest = bLOOP_TEST_RESET;
+	//Enqueue data
+	pqueueEnqueue (&sTheQueue, &EXPECTED_INT,
+								 sizeof (EXPECTED_INT), HIGH_PRIORITY);
+	pqueueEnqueue (&sTheQueue, &EXPECTED_CHAR,
+								 sizeof (EXPECTED_CHAR), MEDIUM_PRIORITY);
+	pqueueEnqueue (&sTheQueue, &bEXPECTED_BOOL,
+									 sizeof (bEXPECTED_BOOL), LOW_PRIORITY);
+	//Dequeue data and ensure the correct data and priority was dequeued,
+	//and the size of the queue decreases accordingly
+	pqueueDequeue (&sTheQueue, &actualInt, sizeof (actualInt),
+								 &actualPriority);
+	if ((EXPECTED_INT != actualInt) || (HIGH_PRIORITY != actualPriority)
+			|| (pqueueSize (&sTheQueue) != 2))
+	{
+		bLoopTest = bLOOP_TEST_FAILED;
+	}
+	pqueueDequeue (&sTheQueue, &actualChar, sizeof (actualChar),
+								 &actualPriority);
+	if ((EXPECTED_CHAR != actualChar) || (pqueueSize (&sTheQueue) != 1) ||
+			(MEDIUM_PRIORITY != actualPriority))
+	{
+		bLoopTest = bLOOP_TEST_FAILED;
+	}
+	pqueueDequeue (&sTheQueue, &bActualBool, sizeof (bActualBool),
+									 &actualPriority);
+	if ((bEXPECTED_BOOL != bActualBool) || (LOW_PRIORITY != actualPriority)
+			|| (pqueueSize (&sTheQueue) != 0))
+	{
+		bLoopTest = bLOOP_TEST_FAILED;
+	}
+	assert (bLoopTest,
+					"Many elements dequeued correctly",
+					"Many elements NOT dequeued correctly");
 
+	//******************** Test pqueuePeek ********************
 
+	//******************** Test pqueueChangePriority ********************
 
 	//******************** Test pqueueTerminate ********************
 	//Reset variables used for testing
