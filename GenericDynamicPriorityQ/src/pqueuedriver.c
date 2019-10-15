@@ -93,7 +93,6 @@ int main()
 	const bool bLOOP_TEST_FAILED = false;
 
 	//Constants to be used for loop testing
-	const int LOOP_AMOUNT_LOW = 10;
 	const int LOOP_AMOUNT_MEDIUM = 50;
 	const int LOOP_AMOUNT_HIGH = 200;
 	const int LOOP_AMOUNT_STRESS = 1000000;
@@ -101,7 +100,7 @@ int main()
 	//Iterator to be used for loop testing
 	int i = 0;
 
-	//Variable used to test loops
+	//Boolean to store result multiple conditions
 	bool bLoopTest = bLOOP_TEST_RESET;
 
 	//Variables used to store and test data from queue
@@ -250,7 +249,7 @@ int main()
 	actualInt = RESET_INT;
 	bLoopTest = bLOOP_TEST_RESET;
 	//Add a very large amount of items to the queue
-	for (i = LOOP_AMOUNT_STRESS; i <= 0; i--)
+	for (i = LOOP_AMOUNT_STRESS; i >= 0; i--)
 	{
 		pqueueEnqueue (&sTheQueue, &i, sizeof (i), i);
 	}
@@ -312,6 +311,74 @@ int main()
 					"Many elements NOT dequeued correctly");
 
 	//******************** Test pqueuePeek ********************
+	//Reset variables used for testing
+	pqueueTerminate (&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	actualPriority = RESET_PRIORITY;
+	actualInt = RESET_INT;
+	actualChar = RESET_CHAR;
+	bActualBool = bRESET_BOOL;
+	//Enqueue 1 element
+	pqueueEnqueue (&sTheQueue, &EXPECTED_INT,
+								 sizeof (EXPECTED_INT), LOW_PRIORITY);
+	//Peek the element
+	pqueuePeek (&sTheQueue, &actualInt, sizeof (actualInt),
+							&actualPriority);
+	//Ensure the data and priority was peeked correctly
+	assert ((EXPECTED_INT == actualInt) && (LOW_PRIORITY == actualPriority),
+					"Peeked correctly with 1 element in queue",
+					"Peeked INCORRECTLY with 1 element in queue");
+	//Enqueue another element with a higher priority
+	pqueueEnqueue (&sTheQueue, &EXPECTED_CHAR,
+								 sizeof (EXPECTED_CHAR), MEDIUM_PRIORITY);
+	//Peek the element
+	pqueuePeek (&sTheQueue, &actualChar, sizeof (actualChar),
+							&actualPriority);
+	//Ensure the data and priority was peeked correctly
+	assert ((EXPECTED_CHAR == actualChar) &&
+					(MEDIUM_PRIORITY == actualPriority),
+					"Peeked correctly with 2 elements in queue",
+					"Peeked INCORRECTLY with 2 elements in queue");
+	//Enqueue another element with a higher priority
+	pqueueEnqueue (&sTheQueue, &bEXPECTED_BOOL,
+								 sizeof (bEXPECTED_BOOL), HIGH_PRIORITY);
+	//Peek the element
+	pqueuePeek (&sTheQueue, &bActualBool, sizeof (bActualBool),
+							&actualPriority);
+	//Ensure the data and priority was peeked correctly
+	assert ((bEXPECTED_BOOL == bActualBool) &&
+					(HIGH_PRIORITY == actualPriority),
+					"Peeked correctly with 3 elements in queue",
+					"Peeked INCORRECTLY with 3 elements in queue");
+	//Test pqueuePeek within a loop
+	//Reset data used for testing
+	pqueueTerminate (&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	actualInt = RESET_INT;
+	actualPriority = RESET_PRIORITY;
+	bLoopTest = bLOOP_TEST_RESET;
+	//Enqueue multiple items with increasing priorities, testing after
+	//each add if the Peeked data and priority is correct
+	for (i = LOOP_AMOUNT_HIGH; i >= 0; i--)
+	{
+		pqueueEnqueue (&sTheQueue, &i, sizeof (i), i);
+		pqueuePeek (&sTheQueue, &actualInt, sizeof (actualInt),
+								&actualPriority);
+		if ((i != actualInt) || (i != actualPriority))
+		{
+			bLoopTest = bLOOP_TEST_FAILED;
+		}
+	}
+	assert (bLoopTest,
+					"Correctly Peeked many elements in a queue",
+					"INCORRECTLY Peeked many elements in a queue");
+
+
+
+
+
+
+
 
 	//******************** Test pqueueChangePriority ********************
 
