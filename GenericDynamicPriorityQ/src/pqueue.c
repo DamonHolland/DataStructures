@@ -51,20 +51,21 @@ void pqueueCreate (PriorityQueuePtr psQueue)
 
 void pqueueTerminate (PriorityQueuePtr psQueue)
 {
-	PriorityQueueElementPtr currentElement;
+	PriorityQueueElement currentElement;
 
 	if (!pqueueIsEmpty (psQueue))
 	{
 		lstFirst (&psQueue->sTheList);
-		currentElement = psQueue->sTheList.psCurrent->pData;
-		free (currentElement->pData);
-		while (NULL != psQueue->sTheList.psCurrent->psNext)
+		lstPeek (&psQueue->sTheList, &currentElement,
+						 sizeof (PriorityQueueElement));
+		free (currentElement.pData);
+		while (lstHasNext (&psQueue->sTheList))
 		{
 			lstNext (&psQueue->sTheList);
-			currentElement = psQueue->sTheList.psCurrent->pData;
-			free (currentElement->pData);
+			lstPeek (&psQueue->sTheList, &currentElement,
+									 sizeof (PriorityQueueElement));
+			free (currentElement.pData);
 		}
-
 		lstTerminate (&psQueue->sTheList);
 	}
 
@@ -149,7 +150,7 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 		lstPeek (&psQueue->sTheList, &currentPQElement,
 						 sizeof (PriorityQueueElement));
 		while ((currentPQElement.priority <= newPQElement.priority) &&
-						(NULL != psQueue->sTheList.psCurrent->psNext))
+						lstHasNext (&psQueue->sTheList))
 		{
 			lstNext (&psQueue->sTheList);
 			lstPeek (&psQueue->sTheList, &currentPQElement,
@@ -157,7 +158,7 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 		}
 		//If the list reached the end before finding a lower priority,
 		//add the element to the end
-		if ((NULL == psQueue->sTheList.psCurrent->psNext) &&
+		if (!lstHasNext (&psQueue->sTheList) &&
 				(currentPQElement.priority <= newPQElement.priority))
 		{
 			lstInsertAfter (&psQueue->sTheList, &newPQElement,
@@ -177,7 +178,7 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
 														int size, int  *pPriority)
 {
-	PriorityQueueElement tempBuffer;
+	PriorityQueueElement tempElement;
 
 	//Error Checking
 	if (NULL == psQueue)
@@ -194,9 +195,9 @@ void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
 	}
 
 	pqueuePeek (psQueue, pBuffer, size, pPriority);
-	lstDeleteCurrent (&psQueue->sTheList, &tempBuffer,
+	lstDeleteCurrent (&psQueue->sTheList, &tempElement,
 										sizeof (PriorityQueueElement));
-	free (tempBuffer.pData);
+	free (tempElement.pData);
 
 	return pBuffer;
 }
