@@ -82,6 +82,7 @@ int main()
 	const bool bRESET_BOOL = false;
 
 	//Constant variables to be used as priorities
+	const int RESET_PRIORITY = -5;
 	const int HIGH_PRIORITY = 0;
 	const int MEDIUM_PRIORITY = 5;
 	const int LOW_PRIORITY = 10;
@@ -104,9 +105,10 @@ int main()
 	bool bLoopTest = bLOOP_TEST_RESET;
 
 	//Variables used to store and test data from queue
+	int actualPriority = RESET_PRIORITY;
 	int actualInt = RESET_INT;
 	char actualChar = RESET_CHAR;
-	bool actualBool = bRESET_BOOL;
+	bool bActualBool = bRESET_BOOL;
 
 	//The queue being used for testing
 	PriorityQueue sTheQueue;
@@ -180,6 +182,66 @@ int main()
 	assert (bLoopTest,
 					"pqueueIsEmpty is false with multiple elements added",
 					"pqueueIsEmpty is NOT false with multiple elements added");
+
+	//******************** Test pqueueEnqueue ********************
+	//Reset variables used for testing
+	pqueueTerminate (&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	actualPriority = RESET_PRIORITY;
+	actualInt = RESET_INT;
+	actualChar = RESET_CHAR;
+	//Enqueue data with same priority
+	pqueueEnqueue (&sTheQueue, &EXPECTED_INT,
+								 sizeof (EXPECTED_INT), MEDIUM_PRIORITY);
+	pqueueEnqueue (&sTheQueue, &EXPECTED_CHAR,
+								 sizeof (EXPECTED_CHAR), MEDIUM_PRIORITY);
+	//Peek the data, checking if the data is correct
+	//The Peeked data should match the data added first
+	pqueuePeek (&sTheQueue, &actualInt, sizeof (actualInt),
+							&actualPriority);
+	assert ((EXPECTED_INT == actualInt) &&
+					(MEDIUM_PRIORITY == actualPriority),
+					"elements added to queue correctly with same priority",
+					"elements NOT added to queue correctly with same priority");
+	//Enqueue data from high-low priority
+	//Reset Variables used to test
+	pqueueTerminate (&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	actualPriority = RESET_PRIORITY;
+	actualInt = RESET_INT;
+	actualChar = RESET_CHAR;
+	pqueueEnqueue (&sTheQueue, &EXPECTED_INT,
+								 sizeof (EXPECTED_INT), HIGH_PRIORITY);
+	pqueueEnqueue (&sTheQueue, &EXPECTED_CHAR,
+								 sizeof (EXPECTED_CHAR), MEDIUM_PRIORITY);
+	//Peek the data, checking if the data is correct
+	//The Peeked data should match the higher priority data
+	pqueuePeek (&sTheQueue, &actualInt, sizeof (actualInt),
+							&actualPriority);
+	assert ((EXPECTED_INT == actualInt) &&
+					(HIGH_PRIORITY == actualPriority),
+					"elements added to queue correctly with high-low priority",
+					"elements NOT added to queue correctly with high-low priority");
+	//Enqueue data from low-high priority
+	//Reset Variables used to test
+	pqueueTerminate (&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	actualPriority = RESET_PRIORITY;
+	actualInt = RESET_INT;
+	actualChar = RESET_CHAR;
+	pqueueEnqueue (&sTheQueue, &EXPECTED_CHAR,
+								 sizeof (EXPECTED_CHAR), MEDIUM_PRIORITY);
+	pqueueEnqueue (&sTheQueue, &EXPECTED_INT,
+								 sizeof (EXPECTED_INT), HIGH_PRIORITY);
+	//Peek the data, checking if the data is correct
+	//The Peeked data should match the higher priority data
+	pqueuePeek (&sTheQueue, &actualInt, sizeof (actualInt),
+							&actualPriority);
+	assert ((EXPECTED_INT == actualInt) &&
+					(HIGH_PRIORITY == actualPriority),
+					"elements added to queue correctly with low-high priority",
+					"elements NOT added to queue correctly with low-high priority");
+	//TEST THIS IN A LOOP USING DEQUEUE
 
 
 	//******************** Test pqueueTerminate ********************

@@ -110,7 +110,7 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 										int size, int priority)
 {
 	PriorityQueueElement newPQElement;
-	PriorityQueueElementPtr currentPQElement;
+	PriorityQueueElement currentPQElement;
 
 	//Error Checking
 	if (NULL == psQueue)
@@ -140,16 +140,19 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 		//the first element with a lower priority than the data being added
 		//or to the end of the list, whichever is first
 		lstFirst (&psQueue->sTheList);
-		currentPQElement = psQueue->sTheList.psCurrent->pData;
-		while ((currentPQElement->priority <= newPQElement.priority) &&
+		lstPeek (&psQueue->sTheList, &currentPQElement,
+						 sizeof (PriorityQueueElement));
+		while ((currentPQElement.priority <= newPQElement.priority) &&
 						(NULL != psQueue->sTheList.psCurrent->psNext))
 		{
 			lstNext (&psQueue->sTheList);
-			currentPQElement = psQueue->sTheList.psCurrent->pData;
+			lstPeek (&psQueue->sTheList, &currentPQElement,
+							 sizeof (PriorityQueueElement));
 		}
 		//If the list reached the end before finding a lower priority,
 		//add the element to the end
-		if (NULL == psQueue->sTheList.psCurrent->psNext)
+		if ((NULL == psQueue->sTheList.psCurrent->psNext) &&
+				(currentPQElement.priority <= newPQElement.priority))
 		{
 			lstInsertAfter (&psQueue->sTheList, &newPQElement,
 											sizeof (newPQElement));
@@ -171,8 +174,37 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 //************************************************************************
 //													Peek Operations
 //************************************************************************
-//void *pqueuePeek (PriorityQueuePtr psQueue, void *pBuffer, int size,
-//								 int *priority);
+void *pqueuePeek (PriorityQueuePtr psQueue, void *pBuffer, int size,
+								 int *priority)
+{
+	PriorityQueueElement firstPQElement;
+
+	//Error Checking
+	if (NULL == psQueue)
+	{
+		processError ("pqueuePeek", ERROR_INVALID_PQ);
+	}
+	if (NULL == pBuffer)
+	{
+		processError ("pqueuePeek", ERROR_NULL_PQ_PTR);
+	}
+	if (pqueueIsEmpty (psQueue))
+	{
+		processError ("pqueuePeek", ERROR_EMPTY_PQ);
+	}
+
+	//Set firstElement to the first element in the queue
+	lstFirst (&psQueue->sTheList);
+	lstPeek (&psQueue->sTheList, &firstPQElement,
+					 sizeof (PriorityQueueElement));
+
+	//Set the priority and buffer to the values in the element to
+	//be returned outside of this functions
+	*priority = firstPQElement.priority;
+	memcpy (pBuffer, firstPQElement.pData, size);
+
+	return pBuffer;
+}
 
 //void pqueueChangePriority (PriorityQueuePtr psQueue,
 //																	int change);
