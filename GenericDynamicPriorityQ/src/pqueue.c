@@ -196,6 +196,7 @@ void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
 	pqueuePeek (psQueue, pBuffer, size, pPriority);
 	lstDeleteCurrent (&psQueue->sTheList, &tempBuffer,
 										sizeof (PriorityQueueElement));
+	free (tempBuffer.pData);
 
 	return pBuffer;
 }
