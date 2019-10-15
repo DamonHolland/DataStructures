@@ -77,7 +77,7 @@ int main()
 	const bool bEXPECTED_BOOL = true;
 
 	//Constant variables to reset test data
-	const int RESET_INT = 0;
+	const int RESET_INT = -5;
 	const char RESET_CHAR = 'A';
 	const bool bRESET_BOOL = false;
 
@@ -96,7 +96,7 @@ int main()
 	const int LOOP_AMOUNT_LOW = 10;
 	const int LOOP_AMOUNT_MEDIUM = 50;
 	const int LOOP_AMOUNT_HIGH = 200;
-	const int LOOP_AMOUNT_STRESS = 100000000;
+	const int LOOP_AMOUNT_STRESS = 10000;
 
 	//Iterator to be used for loop testing
 	int i = 0;
@@ -241,7 +241,34 @@ int main()
 					(HIGH_PRIORITY == actualPriority),
 					"elements added to queue correctly with low-high priority",
 					"elements NOT added to queue correctly with low-high priority");
-	//TEST THIS IN A LOOP USING DEQUEUE
+	//Test pqueueEnqueue within a very large loop for a stress test, then
+	//use pqueueDequeue to verify the data and priorities that were added
+	//Reset variables used for testing
+	pqueueTerminate (&sTheQueue);
+	pqueueCreate (&sTheQueue);
+	actualPriority = RESET_PRIORITY;
+	actualInt = RESET_INT;
+	bLoopTest = bLOOP_TEST_RESET;
+	//Add a very large amount of items to the queue
+	for (i = 0; i <= LOOP_AMOUNT_STRESS; i++)
+	{
+		pqueueEnqueue (&sTheQueue, &i, sizeof (i), i);
+	}
+	//Dequeue to test all data added
+	for (i = 0; i <= LOOP_AMOUNT_STRESS; i++)
+	{
+		pqueueDequeue (&sTheQueue, &actualInt, sizeof (actualInt),
+									 &actualPriority);
+		if ((actualInt != i) || (actualPriority != i))
+		{
+			bLoopTest = bLOOP_TEST_FAILED;
+		}
+	}
+	assert (bLoopTest,
+					"Many items added to queue correctly",
+					"Many items NOT added to queue correctly");
+
+
 
 
 	//******************** Test pqueueTerminate ********************

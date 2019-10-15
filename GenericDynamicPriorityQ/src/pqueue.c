@@ -177,6 +177,8 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
 														int size, int  *pPriority)
 {
+	PriorityQueueElement tempBuffer;
+
 	//Error Checking
 	if (NULL == psQueue)
 	{
@@ -192,7 +194,7 @@ void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
 	}
 
 	pqueuePeek (psQueue, pBuffer, size, pPriority);
-	lstDeleteCurrent (&psQueue->sTheList, NULL,
+	lstDeleteCurrent (&psQueue->sTheList, &tempBuffer,
 										sizeof (PriorityQueueElement));
 
 	return pBuffer;
