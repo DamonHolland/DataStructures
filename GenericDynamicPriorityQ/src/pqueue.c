@@ -36,7 +36,7 @@ static void processError (const char *pszFunctionName, int errorCode)
 //************************************************************************
 //										Allocation and Deallocation
 //************************************************************************
-void pqueueCreate (PriorityQueuePtr psQueue /*, 	cmpFunction cmpFunct */)
+void pqueueCreate (PriorityQueuePtr psQueue)
 {
 	lstCreate (&psQueue->sTheList);
 
@@ -66,6 +66,12 @@ void pqueueTerminate (PriorityQueuePtr psQueue)
 		}
 
 		lstTerminate (&psQueue->sTheList);
+	}
+
+	//Error Checking
+	if (!pqueueIsEmpty (psQueue))
+	{
+		processError ("pqueueTerminate", ERROR_NO_PQ_TERMINATE);
 	}
 
 	return;
@@ -168,8 +174,29 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 	return;
 }
 
-//void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
-//														int size, int  *pPriority);
+void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
+														int size, int  *pPriority)
+{
+	//Error Checking
+	if (NULL == psQueue)
+	{
+		processError ("pqueueDequeue", ERROR_INVALID_PQ);
+	}
+	if (NULL == pBuffer)
+	{
+		processError ("pqueueDequeue", ERROR_NULL_PQ_PTR);
+	}
+	if (pqueueIsEmpty (psQueue))
+	{
+		processError ("pqueueDequeue", ERROR_EMPTY_PQ);
+	}
+
+	pqueuePeek (psQueue, pBuffer, size, pPriority);
+	lstDeleteCurrent (&psQueue->sTheList, NULL,
+										sizeof (PriorityQueueElement));
+
+	return pBuffer;
+}
 
 //************************************************************************
 //													Peek Operations
@@ -206,5 +233,37 @@ void *pqueuePeek (PriorityQueuePtr psQueue, void *pBuffer, int size,
 	return pBuffer;
 }
 
-//void pqueueChangePriority (PriorityQueuePtr psQueue,
-//																	int change);
+void pqueueChangePriority (PriorityQueuePtr psQueue,
+																	int change)
+{
+	PriorityQueueElement tempPQElement;
+
+	//Error Checking
+	if (NULL == psQueue)
+	{
+		processError ("pqueueChangePriority", ERROR_INVALID_PQ);
+	}
+
+	if (!lstIsEmpty (&psQueue->sTheList))
+	{
+		lstFirst (&psQueue->sTheList);
+		lstPeek (&psQueue->sTheList, &tempPQElement,
+						 sizeof (PriorityQueueElement));
+		tempPQElement.priority += change;
+		lstUpdateCurrent (&psQueue->sTheList, &tempPQElement,
+											sizeof (PriorityQueueElement));
+
+		while (lstHasNext (&psQueue->sTheList))
+		{
+			lstNext (&psQueue->sTheList);
+			lstPeek (&psQueue->sTheList, &tempPQElement,
+							 sizeof (PriorityQueueElement));
+			tempPQElement.priority += change;
+			lstUpdateCurrent (&psQueue->sTheList, &tempPQElement,
+												sizeof (PriorityQueueElement));
+		}
+	}
+
+
+	return;
+}
