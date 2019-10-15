@@ -275,10 +275,12 @@ void *pqueueDequeue (PriorityQueuePtr psQueue, void *pBuffer,
 	{
 		processError ("pqueueDequeue", ERROR_EMPTY_PQ);
 	}
-
+	//Peek the data to return outside of function
 	pqueuePeek (psQueue, pBuffer, size, pPriority);
+	//Since Peek sets current to the first element, you can delete current
 	lstDeleteCurrent (&psQueue->sTheList, &sTempElement,
 										sizeof (PriorityQueueElement));
+	//sTempElement holds the element on the heap, so you can free the data
 	free (sTempElement.pData);
 
 	return pBuffer;
@@ -348,7 +350,6 @@ void *pqueuePeek (PriorityQueuePtr psQueue, void *pBuffer, int size,
 
  Returned:	 	None
  ************************************************************************/
-
 void pqueueChangePriority (PriorityQueuePtr psQueue, int change)
 {
 	PriorityQueueElement sTempPQElement;
@@ -359,15 +360,19 @@ void pqueueChangePriority (PriorityQueuePtr psQueue, int change)
 		processError ("pqueueChangePriority", ERROR_INVALID_PQ);
 	}
 
+	//Only do anything if the queue is not empty
 	if (!lstIsEmpty (&psQueue->sTheList))
 	{
+		//Since the queue is not empty, we know there is at least a first
+		//element. So, update the first element
 		lstFirst (&psQueue->sTheList);
 		lstPeek (&psQueue->sTheList, &sTempPQElement,
 						 sizeof (PriorityQueueElement));
 		sTempPQElement.priority += change;
 		lstUpdateCurrent (&psQueue->sTheList, &sTempPQElement,
 											sizeof (PriorityQueueElement));
-
+		//Then, keep moving through the queue until the end, updating all of
+		//the elements along the way
 		while (lstHasNext (&psQueue->sTheList))
 		{
 			lstNext (&psQueue->sTheList);

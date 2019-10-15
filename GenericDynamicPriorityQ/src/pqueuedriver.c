@@ -283,7 +283,7 @@ int main()
 	pqueueEnqueue (&sTheQueue, &EXPECTED_CHAR,
 								 sizeof (EXPECTED_CHAR), MEDIUM_PRIORITY);
 	pqueueEnqueue (&sTheQueue, &bEXPECTED_BOOL,
-									 sizeof (bEXPECTED_BOOL), LOW_PRIORITY);
+								 sizeof (bEXPECTED_BOOL), LOW_PRIORITY);
 	//Dequeue data and ensure the correct data and priority was dequeued,
 	//and the size of the queue decreases accordingly
 	pqueueDequeue (&sTheQueue, &actualInt, sizeof (actualInt),
@@ -385,7 +385,7 @@ int main()
 	bLoopTest = bLOOP_TEST_RESET;
 	//Add some data
 	pqueueEnqueue (&sTheQueue, &EXPECTED_INT,
-									 sizeof (EXPECTED_INT), HIGH_PRIORITY);
+								 sizeof (EXPECTED_INT), HIGH_PRIORITY);
 	pqueueEnqueue (&sTheQueue, &EXPECTED_CHAR,
 								 sizeof (EXPECTED_CHAR), MEDIUM_PRIORITY);
 	pqueueEnqueue (&sTheQueue, &bEXPECTED_BOOL,
