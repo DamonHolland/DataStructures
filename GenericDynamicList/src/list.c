@@ -339,7 +339,7 @@ void lstNext (ListPtr psList)
 		processError ("lstNext", ERROR_NO_CURRENT);
 	}
 
-		psList->psCurrent = psList->psCurrent->psNext;
+	psList->psCurrent = psList->psCurrent->psNext;
 
 	return;
 }
@@ -366,11 +366,8 @@ void lstLast (ListPtr psList)
 		processError ("lstLast", ERROR_EMPTY_LIST);
 	}
 
-	//Set current to first element, then move until the next is NULL
-	psList->psCurrent = psList->psFirst;
-	while (lstHasNext (psList)){
-		lstNext (psList);
-	}
+	//Set current to last element
+	psList->psCurrent = psList->psLast;
 
 	return;
 }

@@ -181,6 +181,10 @@ bool pqueueIsEmpty (const PriorityQueuePtr psQueue)
 void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 										int size, int priority)
 {
+
+	//ADD SPECIAL CASE FOR INSTERTING AT THE END FOR THE QUEUE
+
+
 	PriorityQueueElement sNewPQElement;
 	PriorityQueueElement sCurrentPQElement;
 
@@ -208,33 +212,52 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 	}
 	else
 	{
-		//If the queue is not empty, move the current element in the list to
-		//the first element with a lower priority than the data being added
-		//or to the end of the list, whichever is first
-		lstFirst (&psQueue->sTheList);
+		//Check for the special case that the given priority is the
+		//lowest priority, so you can add to the end.
+		//This is useful to help optimize a normal queue
+		lstLast (&psQueue->sTheList);
 		lstPeek (&psQueue->sTheList, &sCurrentPQElement,
 						 sizeof (PriorityQueueElement));
-		while ((sCurrentPQElement.priority <= sNewPQElement.priority) &&
-						lstHasNext (&psQueue->sTheList))
-		{
-			lstNext (&psQueue->sTheList);
-			lstPeek (&psQueue->sTheList, &sCurrentPQElement,
-							 sizeof (PriorityQueueElement));
-		}
-		//If the list reached the end before finding a lower priority,
-		//add the element to the end
-		if (!lstHasNext (&psQueue->sTheList) &&
-				(sCurrentPQElement.priority <= sNewPQElement.priority))
+		if (sCurrentPQElement.priority <= sNewPQElement.priority)
 		{
 			lstInsertAfter (&psQueue->sTheList, &sNewPQElement,
 											sizeof (sNewPQElement));
 		}
-		//else, add it before the element with the lower priority
 		else
 		{
-			lstInsertBefore (&psQueue->sTheList, &sNewPQElement,
-											 sizeof (sNewPQElement));
+			//If the queue is not empty, move the current element in the list to
+			//the first element with a lower priority than the data being added
+			//or to the end of the list, whichever is first
+			lstFirst (&psQueue->sTheList);
+			lstPeek (&psQueue->sTheList, &sCurrentPQElement,
+							 sizeof (PriorityQueueElement));
+			while ((sCurrentPQElement.priority <= sNewPQElement.priority) &&
+							lstHasNext (&psQueue->sTheList))
+			{
+				lstNext (&psQueue->sTheList);
+				lstPeek (&psQueue->sTheList, &sCurrentPQElement,
+								 sizeof (PriorityQueueElement));
+			}
+			//If the list reached the end before finding a lower priority,
+			//add the element to the end
+			if (!lstHasNext (&psQueue->sTheList) &&
+					(sCurrentPQElement.priority <= sNewPQElement.priority))
+			{
+				lstInsertAfter (&psQueue->sTheList, &sNewPQElement,
+												sizeof (sNewPQElement));
+			}
+			//else, add it before the element with the lower priority
+			else
+			{
+				lstInsertBefore (&psQueue->sTheList, &sNewPQElement,
+												 sizeof (sNewPQElement));
+			}
 		}
+
+
+
+
+
 	}
 
 	return;

@@ -88,7 +88,7 @@ int main()
 
 	//Constants to be used for loop testing
 	const int LOOP_AMOUNT_MEDIUM = 50;
-	const int LOOP_AMOUNT_STRESS = 10000;
+	const int LOOP_AMOUNT_STRESS = 1000000;
 
 	//Iterator to be used for loop testing
 	int i = 0;
