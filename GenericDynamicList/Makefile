@@ -25,6 +25,10 @@ bin/listdriver.o: src/listdriver.c include/list.h
 	 
 bin/list.o: src/list.c include/list.h
 	${CC} ${CFLAGS} -c src/list.c -o bin/list.o
+	
+valgrind: bin/listdriver
+	valgrind -v --leak-check=yes --track-origins=yes --leak-check=full \
+ 	--show-leak-kinds=all bin/listdriver
  	
 tarball: clean
 	tar czf ../cs300_2B_holl9358.tar.gz ../GenericDynamicList
