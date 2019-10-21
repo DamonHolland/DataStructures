@@ -87,7 +87,7 @@ int main()
 	const bool bLOOP_TEST_FAILED = false;
 
 	//Constants to be used for loop testing
-	const int LOOP_AMOUNT_MEDIUM = 50;
+	const int LOOP_AMOUNT_MEDIUM = 100;
 	const int LOOP_AMOUNT_STRESS = 1000000;
 
 	//Iterator to be used for loop testing
