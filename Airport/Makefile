@@ -17,17 +17,23 @@ all: bin bin/airportdriver
 bin: 
 	mkdir -p bin
 
-bin/airportdriver: bin/airportdriver.o ../GenericDynamicQ/bin/queue.o \
-	../GenericDynamicPriorityQ/bin/pqueue.o ../GenericDynamicList/bin/list.o
-	${CC} ${CFLAGS} bin/airportdriver.o ../GenericDynamicQ/bin/queue.o \
-	../GenericDynamicPriorityQ/bin/pqueue.o \
+bin/airportdriver: bin/airportdriver.o bin/airport.o \
+	../GenericDynamicQ/bin/queue.o ../GenericDynamicPriorityQ/bin/pqueue.o \
+	../GenericDynamicList/bin/list.o
+	${CC} ${CFLAGS} bin/airportdriver.o bin/airport.o \
+	../GenericDynamicQ/bin/queue.o ../GenericDynamicPriorityQ/bin/pqueue.o \
 	../GenericDynamicList/bin/list.o -o bin/airportdriver
 
-bin/airportdriver.o: src/airportdriver.c \
+bin/airportdriver.o: src/airportdriver.c include/airport.h \
 	../GenericDynamicQ/include/queue.h \
 	../GenericDynamicPriorityQ/include/pqueue.h \
 	../GenericDynamicList/include/list.h 
 	${CC} ${CFLAGS} -c src/airportdriver.c -o bin/airportdriver.o
+	 
+bin/airport.o: include/airport.h src/airport.c \
+	../GenericDynamicQ/include/queue.h \
+	../GenericDynamicPriorityQ/include/pqueue.h 
+	 ${CC} ${CFLAGS} -c src/airport.c -o bin/airport.o
 	 
 ../GenericDynamicQ/bin/queue.o: 
 	cd ../GenericDynamicQ; make bin/queue.o
@@ -40,7 +46,11 @@ bin/airportdriver.o: src/airportdriver.c \
 	
 valgrind: bin/airportdriver
 	valgrind -v --leak-check=yes --track-origins=yes --leak-check=full \
-  --show-leak-kinds=all bin/airportdriver
+  --show-leak-kinds=all bin/airportdriver data/airport.txt
+  
+tarball: clean
+	tar czf ../cs300_4_holl9358.tar.gz ../Airport ../GenericDynamicQ \
+	../GenericDynamicPriorityQ ../GenericDynamicList
  	
 clean:
 	rm -rf bin/*.o bin/airportdriver
