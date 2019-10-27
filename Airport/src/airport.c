@@ -10,20 +10,29 @@ Purpose:    Implement functions in airport.h
 #include "../include/airport.h"
 
 #define NO_FUEL 0
-
+#define FUEL_DECREMENT -1
 
 void airportAddTakeoffPlane (AirportPtr psAirport)
 {
 	Airplane sNewPlane;
-	createPlane (&sNewPlane, NO_FUEL);
 
 	queueEnqueue (&psAirport->sTakeOffQueue, &sNewPlane, sizeof(sNewPlane));
 
 	return;
 }
 
-void createPlane (AirplanePtr psPlane, int fuel)
+extern void airportAddLandingPlane (AirportPtr psAirport, int fuel)
 {
-	psPlane->fuel = fuel;
+	Airplane sNewPlane;
+
+	pqueueEnqueue (&psAirport->sLandingQueue, &sNewPlane, sizeof(sNewPlane),
+								 fuel);
+
+	return;
+}
+
+extern void airportDecrementFuel (AirportPtr psAirport)
+{
+	pqueueChangePriority (&psAirport->sLandingQueue, FUEL_DECREMENT);
 	return;
 }

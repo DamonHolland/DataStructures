@@ -19,7 +19,7 @@ Purpose:    Header file for airport
 typedef struct Airplane *AirplanePtr;
 typedef struct Airplane
 {
-		int fuel;
+		//No need to store fuel value because priority is used instead
 } Airplane;
 
 typedef struct Airport *AirportPtr;
@@ -32,9 +32,9 @@ typedef struct Airport
 
 extern void airportAddTakeoffPlane (AirportPtr psAirport);
 
-extern void createPlane (AirplanePtr psPlane, int fuel);
+extern void airportAddLandingPlane (AirportPtr psAirport, int fuel);
 
-
+extern void airportDecrementFuel (AirportPtr psAirport);
 
 
 

@@ -23,11 +23,13 @@ int main ()
 	int MAX_PLANES_ADDED = 3, PLANE1 = 0, PLANE2 = 1, PLANE3 = 2;
 	int fuelCounts[MAX_PLANES_ADDED];
 
+	//Formatting Variables
+
 	//Iterator variable
 	int i;
 
-	//The file used to read data
-	FILE* inFile = fopen(FILE_NAME, "r");;
+	//The file used to read data, file is validated
+	FILE* inFile = fopen(FILE_NAME, "r");
 	if(!inFile)
 	{
 		printf("Error: Unable to open file\n");
@@ -37,21 +39,31 @@ int main ()
 	//The airport
 	Airport sTheAirport;
 
-	//******************** MAIN AIRPORT LOOP ********************
 
-	//******************** 1) Read data into the Airport ********************
-	//Read data from the file
+	//******************** PRINT HEADER TO SCREEN ********************
+	printf ("     |           Planes Added            |      Runways      |"
+					"   Queue  Lengths\n");
+	printf ("Time | Takeoff  Landing (Fuel Remaining) |  1   2   3  Crash |"
+					" Takeoff  Landing\n");
+	printf ("---- | -------  ------------------------ | --- --- --- ----- |"
+					" -------  -------");
+
+
+	//******************** MAIN AIRPORT LOOP ********************
+	//******************** 1) Read data from file ********************
 	fscanf(inFile, "%d %d %d %d %d", &numNewTakeoffPlanes, &numNewLandingPlanes,
 				 &fuelCounts[PLANE1], &fuelCounts[PLANE2], &fuelCounts[PLANE3]);
-	//Add the data to the airport
-
-
-
+	//******************** 2) Insert Data into airport ********************
 	for (i = 0; i < numNewTakeoffPlanes; i++)
 	{
 		airportAddTakeoffPlane (&sTheAirport);
 	}
-
+	for (i = 0; i < numNewLandingPlanes; i++)
+	{
+		airportAddLandingPlane (&sTheAirport, fuelCounts[i]);
+	}
+	//******************** 3) Decrement fuel from planes ********************
+	airportDecrementFuel (&sTheAirport);
 
 
 	return EXIT_SUCCESS;
