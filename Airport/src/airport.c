@@ -9,3 +9,21 @@ Purpose:    Implement functions in airport.h
 
 #include "../include/airport.h"
 
+#define NO_FUEL 0
+
+
+void airportAddTakeoffPlane (AirportPtr psAirport)
+{
+	Airplane sNewPlane;
+	createPlane (&sNewPlane, NO_FUEL);
+
+	queueEnqueue (&psAirport->sTakeOffQueue, &sNewPlane, sizeof(sNewPlane));
+
+	return;
+}
+
+void createPlane (AirplanePtr psPlane, int fuel)
+{
+	psPlane->fuel = fuel;
+	return;
+}
