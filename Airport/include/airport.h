@@ -16,6 +16,7 @@ Purpose:    Header file for airport
 //*************************************************************************
 // User-defined types
 //*************************************************************************
+
 typedef struct Airplane *AirplanePtr;
 typedef struct Airplane
 {
@@ -25,19 +26,33 @@ typedef struct Airplane
 typedef struct Airport *AirportPtr;
 typedef struct Airport
 {
-		Queue sTakeOffQueue;
+		Queue sTakeoffQueue;
 		PriorityQueue sLandingQueue;
 } Airport;
 
+extern void airportLoadErrorMessages ();
+
+extern void airportCreate (AirportPtr psAirport);
+
+extern void airportTerminate (AirportPtr psAirport);
+
+extern bool airportIsEmpty (AirportPtr psAirport);
+
+extern int airportLengthOfLandingQueue (AirportPtr psAirport);
+
+extern int airportLengthOfTakeoffQueue (AirportPtr psAirport);
+
+extern int airportLowestFuelAmount (AirportPtr psAirport);
 
 extern void airportAddTakeoffPlane (AirportPtr psAirport);
 
 extern void airportAddLandingPlane (AirportPtr psAirport, int fuel);
 
-extern void airportDecrementFuel (AirportPtr psAirport);
+extern void airportLandPlane (AirportPtr psAirport);
 
+extern void airportTakeoffPlane (AirportPtr psAirport);
 
-
+extern void airportDecrementFuel (AirportPtr psAirport, int amount);
 
 
 

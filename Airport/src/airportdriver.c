@@ -12,15 +12,29 @@ Purpose:    The driver for the airport assignment
 #include "../include/airport.h"
 
 
+
+static void printHeader ()
+{
+	printf ("     |           Planes Added            |      Runways      |"
+						"   Queue  Lengths\n");
+	printf ("Time | Takeoff  Landing (Fuel Remaining) |  1   2   3  Crash |"
+					" Takeoff  Landing\n");
+	printf ("---- | -------  ------------------------ | --- --- --- ----- |"
+					" -------  -------\n");
+}
+
 int main ()
 {
 	//******************** CONSTANT VARIABLES ********************
 	char FILE_NAME[] = "data/airport.txt";
+	const int FUEL_DECREMENT = -1;
+	const int NUM_RUNWAYS = 3;
+	const int MAX_PLANES_ADDED = 3, PLANE1 = 0, PLANE2 = 1, PLANE3 = 2;
+	const int NO_FUEL = 0;
 
 	//******************** VARIABLES ********************
 	//Variables to store information from the file
 	int numNewTakeoffPlanes, numNewLandingPlanes;
-	int MAX_PLANES_ADDED = 3, PLANE1 = 0, PLANE2 = 1, PLANE3 = 2;
 	int fuelCounts[MAX_PLANES_ADDED];
 
 	//Formatting Variables
@@ -28,11 +42,15 @@ int main ()
 	//Iterator variable
 	int i;
 
+	int runwaysUsed = 0;
+
+	int clock = 1;
+
 	//The file used to read data, file is validated
-	FILE* inFile = fopen(FILE_NAME, "r");
+	FILE* inFile = fopen (FILE_NAME, "r");
 	if(!inFile)
 	{
-		printf("Error: Unable to open file\n");
+		printf ("Error: Unable to open file\n");
 		exit (EXIT_FAILURE);
 	}
 
@@ -40,19 +58,26 @@ int main ()
 	Airport sTheAirport;
 
 
-	//******************** PRINT HEADER TO SCREEN ********************
-	printf ("     |           Planes Added            |      Runways      |"
-					"   Queue  Lengths\n");
-	printf ("Time | Takeoff  Landing (Fuel Remaining) |  1   2   3  Crash |"
-					" Takeoff  Landing\n");
-	printf ("---- | -------  ------------------------ | --- --- --- ----- |"
-					" -------  -------");
+	printHeader ();
 
+	airportLoadErrorMessages ();
+	airportCreate (&sTheAirport);
 
 	//******************** MAIN AIRPORT LOOP ********************
-	//******************** 1) Read data from file ********************
-	fscanf(inFile, "%d %d %d %d %d", &numNewTakeoffPlanes, &numNewLandingPlanes,
-				 &fuelCounts[PLANE1], &fuelCounts[PLANE2], &fuelCounts[PLANE3]);
+	while (!feof (inFile) || !airportIsEmpty (&sTheAirport))
+	{
+		if (feof (inFile))
+		{
+			numNewTakeoffPlanes = 0;
+			numNewLandingPlanes = 0;
+		}
+		else
+		{
+			runwaysUsed = 0;
+			//******************** 1) Read data from file ********************
+			fscanf(inFile, "%d %d %d %d %d", &numNewTakeoffPlanes, &numNewLandingPlanes,
+						 &fuelCounts[PLANE1], &fuelCounts[PLANE2], &fuelCounts[PLANE3]);
+		}
 	//******************** 2) Insert Data into airport ********************
 	for (i = 0; i < numNewTakeoffPlanes; i++)
 	{
@@ -63,8 +88,36 @@ int main ()
 		airportAddLandingPlane (&sTheAirport, fuelCounts[i]);
 	}
 	//******************** 3) Decrement fuel from planes ********************
-	airportDecrementFuel (&sTheAirport);
+	airportDecrementFuel (&sTheAirport, FUEL_DECREMENT);
+	//******************** 4) Emergency Land Planes ********************
+	while (!(runwaysUsed >= NUM_RUNWAYS) &&
+				 (airportLengthOfLandingQueue (&sTheAirport) != 0)
+				 && NO_FUEL == airportLowestFuelAmount (&sTheAirport))
+	{
+		airportLandPlane (&sTheAirport);
+	}
+	//******************** 5) Land Leftover Planes ********************
+	while ((runwaysUsed < NUM_RUNWAYS) && !airportIsEmpty (&sTheAirport))
+	{
+		if ((airportLengthOfLandingQueue (&sTheAirport) >=
+				airportLengthOfTakeoffQueue (&sTheAirport)))
+		{
+			airportLandPlane (&sTheAirport);
+		}
+		else
+		{
+			airportTakeoffPlane (&sTheAirport);
+		}
+	}
+	//******************** 6) Print Result of Turn ********************
+	printf ("%4d | %8d%8d | \n", clock, numNewTakeoffPlanes, numNewLandingPlanes);
+	//******************** 7) Increment Clock ********************
+	clock++;
 
+	}
+
+	airportTerminate (&sTheAirport);
+	fclose (inFile);
 
 	return EXIT_SUCCESS;
 }

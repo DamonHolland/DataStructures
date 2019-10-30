@@ -10,18 +10,72 @@ Purpose:    Implement functions in airport.h
 #include "../include/airport.h"
 
 #define NO_FUEL 0
-#define FUEL_DECREMENT -1
+
+void airportLoadErrorMessages ()
+{
+	queueLoadErrorMessages ();
+	return;
+}
+
+void airportCreate (AirportPtr psAirport)
+{
+	queueCreate (&psAirport->sTakeoffQueue);
+	pqueueCreate (&psAirport->sLandingQueue);
+	return;
+}
+
+void airportTerminate (AirportPtr psAirport)
+{
+	queueTerminate (&psAirport->sTakeoffQueue);
+	pqueueTerminate (&psAirport->sLandingQueue);
+	return;
+}
+
+bool airportIsEmpty (AirportPtr psAirport)
+{
+	bool bIsEmpty = false;
+	if (pqueueIsEmpty (&psAirport->sLandingQueue) &&
+		  queueIsEmpty (&psAirport->sTakeoffQueue))
+	{
+		bIsEmpty = true;
+	}
+
+	return bIsEmpty;
+}
+
+int airportLengthOfLandingQueue (AirportPtr psAirport)
+{
+	return pqueueSize (&psAirport->sLandingQueue);
+}
+
+int airportLengthOfTakeoffQueue (AirportPtr psAirport)
+{
+	return queueSize (&psAirport->sTakeoffQueue);
+}
+
+int airportLowestFuelAmount (AirportPtr psAirport)
+{
+	Airplane planeBuffer;
+	int fuelAmount;
+
+	pqueuePeek (&psAirport->sLandingQueue, &planeBuffer, sizeof (planeBuffer),
+							&fuelAmount);
+
+	return fuelAmount;
+}
+
 
 void airportAddTakeoffPlane (AirportPtr psAirport)
 {
 	Airplane sNewPlane;
 
-	queueEnqueue (&psAirport->sTakeOffQueue, &sNewPlane, sizeof(sNewPlane));
+	queueEnqueue (&psAirport->sTakeoffQueue, &sNewPlane, sizeof(sNewPlane));
 
 	return;
 }
 
-extern void airportAddLandingPlane (AirportPtr psAirport, int fuel)
+
+void airportAddLandingPlane (AirportPtr psAirport, int fuel)
 {
 	Airplane sNewPlane;
 
@@ -31,8 +85,28 @@ extern void airportAddLandingPlane (AirportPtr psAirport, int fuel)
 	return;
 }
 
-extern void airportDecrementFuel (AirportPtr psAirport)
+
+void airportLandPlane (AirportPtr psAirport)
 {
-	pqueueChangePriority (&psAirport->sLandingQueue, FUEL_DECREMENT);
+	Airplane planeBuffer;
+	int fuelAmount;
+
+	pqueueDequeue (&psAirport->sLandingQueue, &planeBuffer,
+								 sizeof (planeBuffer), &fuelAmount);
+
+	return;
+}
+
+void airportTakeoffPlane (AirportPtr psAirport)
+{
+	Airplane planeBuffer;
+	queueDequeue (&psAirport->sTakeoffQueue, &planeBuffer,
+								 sizeof (planeBuffer));
+	return;
+}
+
+void airportDecrementFuel (AirportPtr psAirport, int amount)
+{
+	pqueueChangePriority (&psAirport->sLandingQueue, -amount);
 	return;
 }

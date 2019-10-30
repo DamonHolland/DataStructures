@@ -182,9 +182,6 @@ void pqueueEnqueue (PriorityQueuePtr psQueue, const void *pBuffer,
 										int size, int priority)
 {
 
-	//ADD SPECIAL CASE FOR INSTERTING AT THE END FOR THE QUEUE
-
-
 	PriorityQueueElement sNewPQElement;
 	PriorityQueueElement sCurrentPQElement;
 

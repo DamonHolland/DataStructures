@@ -64,6 +64,7 @@ extern void queueTerminate (QueuePtr psQueue)
 
 extern void queueLoadErrorMessages ()
 {
+	pqueueLoadErrorMessages ();
 	LOAD_Q_ERRORS
 	return;
 }
