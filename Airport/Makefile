@@ -48,6 +48,14 @@ valgrind: bin/airportdriver
 	valgrind -v --leak-check=yes --track-origins=yes --leak-check=full \
   --show-leak-kinds=all bin/airportdriver data/airport.txt
   
+test1: bin/airportdriver
+	bin/airportdriver data/airport.txt > bin/airport_actual.txt
+	diff -s data/airportexpected.txt bin/airport_actual.txt
+  
+test2: bin/airportdriver
+	bin/airportdriver data/airport2.txt > bin/airport2_actual.txt
+	diff -s data/airport2expected.txt bin/airport2_actual.txt
+  
 tarball: clean
 	tar czf ../cs300_4_holl9358.tar.gz ../Airport ../GenericDynamicQ \
 	../GenericDynamicPriorityQ ../GenericDynamicList

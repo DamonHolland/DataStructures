@@ -9,7 +9,7 @@ Purpose:    Implement functions in airport.h
 
 #include "../include/airport.h"
 
-#define NO_FUEL 0
+#define MINIMUM_WAIT 1
 
 void airportLoadErrorMessages ()
 {
@@ -65,9 +65,10 @@ int airportLowestFuelAmount (AirportPtr psAirport)
 }
 
 
-void airportAddTakeoffPlane (AirportPtr psAirport)
+void airportAddTakeoffPlane (AirportPtr psAirport, int currentTime)
 {
 	Airplane sNewPlane;
+	sNewPlane.timeAdded = currentTime;
 
 	queueEnqueue (&psAirport->sTakeoffQueue, &sNewPlane, sizeof(sNewPlane));
 
@@ -75,9 +76,10 @@ void airportAddTakeoffPlane (AirportPtr psAirport)
 }
 
 
-void airportAddLandingPlane (AirportPtr psAirport, int fuel)
+void airportAddLandingPlane (AirportPtr psAirport, int currentTime, int fuel)
 {
 	Airplane sNewPlane;
+	sNewPlane.timeAdded = currentTime;
 
 	pqueueEnqueue (&psAirport->sLandingQueue, &sNewPlane, sizeof(sNewPlane),
 								 fuel);
@@ -86,27 +88,36 @@ void airportAddLandingPlane (AirportPtr psAirport, int fuel)
 }
 
 
-void airportLandPlane (AirportPtr psAirport)
+int airportLandPlane (AirportPtr psAirport, int currentTime, int *fuelRemainingBuffer)
 {
 	Airplane planeBuffer;
-	int fuelAmount;
+	int fuelAmount, waitTime;
 
 	pqueueDequeue (&psAirport->sLandingQueue, &planeBuffer,
 								 sizeof (planeBuffer), &fuelAmount);
 
-	return;
+	waitTime = currentTime - planeBuffer.timeAdded + MINIMUM_WAIT;
+
+	*fuelRemainingBuffer = fuelAmount;
+
+	return waitTime;
 }
 
-void airportTakeoffPlane (AirportPtr psAirport)
+int airportTakeoffPlane (AirportPtr psAirport, int currentTime)
 {
 	Airplane planeBuffer;
+	int waitTime;
+
 	queueDequeue (&psAirport->sTakeoffQueue, &planeBuffer,
 								 sizeof (planeBuffer));
-	return;
+
+	waitTime = currentTime - planeBuffer.timeAdded + MINIMUM_WAIT;
+
+	return waitTime;
 }
 
 void airportDecrementFuel (AirportPtr psAirport, int amount)
 {
-	pqueueChangePriority (&psAirport->sLandingQueue, -amount);
+	pqueueChangePriority (&psAirport->sLandingQueue, amount);
 	return;
 }
