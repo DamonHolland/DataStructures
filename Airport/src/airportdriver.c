@@ -11,6 +11,14 @@ Purpose:    The driver for the airport assignment
 #include <stdlib.h>
 #include "../include/airport.h"
 
+/*************************************************************************
+ Function: 	 	printHeader
+
+ Description: print the header for the airport output
+
+ Parameters:	none
+ Returned:	 	none
+ ************************************************************************/
 static void printHeader ()
 {
 	printf ("     |           Planes Added            |      Runways      |"
@@ -21,6 +29,16 @@ static void printHeader ()
 					" -------  -------\n");
 }
 
+/*************************************************************************
+ Function: 	 	main
+
+ Description: Main driver for the airport assignment
+
+ Parameters:	argc - an integer that contains the number of arguments
+ 	 	 	 	 	 	 	argv[] - array of characters which are the arguments
+
+ Returned:	 	Exit Status
+ ************************************************************************/
 int main (int argc, char *argv[])
 {
 	//******************** CONSTANT VARIABLES ********************
@@ -29,7 +47,6 @@ int main (int argc, char *argv[])
 	const int MAX_PLANES_ADDED = 3, PLANE1 = 0, PLANE2 = 1, PLANE3 = 2;
 	const int NO_FUEL = 0;
 	const int HEADER_TICK_FREQUENCY = 20;
-
 	//Runway Statuses
 	const char UNUSED_RUNWAY = '-', TAKEOFF_RUNWAY = 'T',
 						 EMERGENCY_RUNWAY = 'E', LANDING_RUNWAY = 'L';
@@ -42,8 +59,10 @@ int main (int argc, char *argv[])
 	int numNewTakeoffPlanes, numNewLandingPlanes;
 	int fuelCounts[MAX_PLANES_ADDED];
 
-	//Runway Variables
+	//Array of chars which contain runway statuses
 	char runwayStatus[NUM_RUNWAYS];
+	//The amount of runways used in each turn
+	int runwaysUsed = 0;
 
 	//Statistics
 	int crashedPlanes = 0;
@@ -56,30 +75,32 @@ int main (int argc, char *argv[])
 	int fuelRemainingOnLanding = 0;
 	int totalFuelRemainingOnLanding = 0;
 
+	//Current time
 	int currentTick = 1;
-	int runwaysUsed = 0;
 
 	//The airport
 	Airport sTheAirport;
 
-	//The file used to read data, file is validated
+	//The file used to read data
 	FILE* inFile = fopen (argv[1], "r");
 
+	//Open and validate file
 	if(!inFile)
 	{
 		printf ("Error: Unable to open file\n");
 		exit (EXIT_FAILURE);
 	}
 
-	printHeader ();
-
+	//Initialize airport
 	airportLoadErrorMessages ();
 	airportCreate (&sTheAirport);
+
+	printHeader ();
 
 	//******************** MAIN AIRPORT LOOP ********************
 	while (!feof (inFile) || !airportIsEmpty (&sTheAirport))
 	{
-		//Reset Variables
+		//******************** Reset Variables ********************
 		runwaysUsed = 0;
 		crashedPlanes = 0;
 		for (i = 0; i < MAX_PLANES_ADDED; i++)
@@ -92,7 +113,10 @@ int main (int argc, char *argv[])
 			runwayStatus[i] = UNUSED_RUNWAY;
 		}
 
-
+		//******************** 1) Read data from file ********************
+		//Only read data if there is new data to be read, If there isn't
+		//allow program to continue landing and takeing off planes until the
+		//queues are empty
 		if (feof (inFile))
 		{
 			numNewTakeoffPlanes = 0;
@@ -100,114 +124,129 @@ int main (int argc, char *argv[])
 		}
 		else
 		{
-			//******************** 1) Read data from file ********************
-			fscanf(inFile, "%d %d %d %d %d", &numNewTakeoffPlanes, &numNewLandingPlanes,
-						 &fuelCounts[PLANE1], &fuelCounts[PLANE2], &fuelCounts[PLANE3]);
+			fscanf(inFile, "%d %d %d %d %d", &numNewTakeoffPlanes,
+						 &numNewLandingPlanes, &fuelCounts[PLANE1],
+						 &fuelCounts[PLANE2], &fuelCounts[PLANE3]);
 		}
 
-	//******************** 2) Insert Data into airport ********************
-	for (i = 0; i < numNewTakeoffPlanes; i++)
-	{
-		airportAddTakeoffPlane (&sTheAirport, currentTick);
-	}
-	for (i = 0; i < numNewLandingPlanes; i++)
-	{
-		airportAddLandingPlane (&sTheAirport, currentTick, fuelCounts[i]);
-	}
-	//******************** 3) Decrement fuel from planes ********************
-	airportDecrementFuel (&sTheAirport, FUEL_DECREMENT);
-	//******************** 4) Emergency Land Planes ********************
-	while ((airportLengthOfLandingQueue (&sTheAirport) != 0)
-				 && NO_FUEL == airportLowestFuelAmount (&sTheAirport))
-	{
-		//If there are available runways, land plane
-		if (!(runwaysUsed >= NUM_RUNWAYS))
+		//******************** 2) Insert Data into airport ********************
+		for (i = 0; i < numNewTakeoffPlanes; i++)
 		{
-			runwayStatus[runwaysUsed] = EMERGENCY_RUNWAY;
-			totalLandingWaitingTime += airportLandPlane (&sTheAirport, currentTick, &fuelRemainingOnLanding);
-			totalFuelRemainingOnLanding += fuelRemainingOnLanding;
-			runwaysUsed++;
-			emergencyLandings++;
-			totalLandings++;
+			airportAddTakeoffPlane (&sTheAirport, currentTick);
 		}
-		//If not, crash the plane
-		else
+		for (i = 0; i < numNewLandingPlanes; i++)
 		{
-			totalLandingWaitingTime += airportLandPlane (&sTheAirport, currentTick, &fuelRemainingOnLanding);
-			crashedPlanes++;
-			totalCrashedPlanes++;
-			totalLandings++;
+			airportAddLandingPlane (&sTheAirport, currentTick, fuelCounts[i]);
 		}
-	}
-	//******************** 5) Land Leftover Planes ********************
-	while ((runwaysUsed < NUM_RUNWAYS) && !airportIsEmpty (&sTheAirport))
-	{
-		if ((airportLengthOfLandingQueue (&sTheAirport) >=
-				airportLengthOfTakeoffQueue (&sTheAirport)))
+
+		//******************** 3) Decrement fuel from planes ********************
+		airportDecrementFuel (&sTheAirport, FUEL_DECREMENT);
+
+		//******************** 4) Emergency Land Planes ********************
+		while (!airportLandingQueueIsEmpty (&sTheAirport)
+				 	 && NO_FUEL == airportLowestFuelAmount (&sTheAirport))
 		{
-			runwayStatus[runwaysUsed] = LANDING_RUNWAY;
-			totalLandingWaitingTime += airportLandPlane (&sTheAirport, currentTick, &fuelRemainingOnLanding);
-			totalFuelRemainingOnLanding += fuelRemainingOnLanding;
-			runwaysUsed++;
-			totalLandings++;
+			//If there are available runways, land plane
+			if (runwaysUsed < NUM_RUNWAYS)
+			{
+				runwayStatus[runwaysUsed] = EMERGENCY_RUNWAY;
+				totalLandingWaitingTime += airportLandPlane (&sTheAirport,
+																	 	 currentTick, &fuelRemainingOnLanding);
+				totalFuelRemainingOnLanding += fuelRemainingOnLanding;
+				runwaysUsed++;
+				emergencyLandings++;
+				totalLandings++;
+			}
+			//If not, crash the plane
+			else
+			{
+				totalLandingWaitingTime += airportLandPlane (&sTheAirport,
+																	 	 currentTick, &fuelRemainingOnLanding);
+				crashedPlanes++;
+				totalCrashedPlanes++;
+				totalLandings++;
+			}
 		}
-		else
+
+		//******************** 5) Land Leftover Planes ********************
+		while ((runwaysUsed < NUM_RUNWAYS) && !airportIsEmpty (&sTheAirport))
 		{
-			runwayStatus[runwaysUsed] = TAKEOFF_RUNWAY;
-			totalTakeoffWaitingTime += airportTakeoffPlane (&sTheAirport, currentTick);
-			runwaysUsed++;
-			totalTakeoffs++;
+			if ((airportLengthOfLandingQueue (&sTheAirport) >=
+					 airportLengthOfTakeoffQueue (&sTheAirport)))
+			{
+				runwayStatus[runwaysUsed] = LANDING_RUNWAY;
+				totalLandingWaitingTime += airportLandPlane (&sTheAirport,
+																	 	 currentTick, &fuelRemainingOnLanding);
+				totalFuelRemainingOnLanding += fuelRemainingOnLanding;
+				runwaysUsed++;
+				totalLandings++;
+			}
+			else
+			{
+				runwayStatus[runwaysUsed] = TAKEOFF_RUNWAY;
+				totalTakeoffWaitingTime += airportTakeoffPlane (&sTheAirport,
+																												currentTick);
+				runwaysUsed++;
+				totalTakeoffs++;
+			}
 		}
-	}
-	//******************** 6) Print Result of Turn ********************
-	//Print Time, Takeoff planes, and Landing Planes
-	printf ("%4d |%8d %8d |", currentTick, numNewTakeoffPlanes,
-					numNewLandingPlanes);
 
-	//Print Fuel Counts
-	for (i = 0; i < MAX_PLANES_ADDED; i++)
-	{
-		if (NO_FUEL == fuelCounts[i])
+		//******************** 6) Print Result of Turn ********************
+		//Print Time, Takeoff planes, and Landing Planes
+		printf ("%4d |%8d %8d |", currentTick, numNewTakeoffPlanes,
+						numNewLandingPlanes);
+
+		//Print Fuel Counts
+		for (i = 0; i < MAX_PLANES_ADDED; i++)
 		{
-			printf ("    -");
+			if (NO_FUEL == fuelCounts[i])
+			{
+				printf ("    -");
+			}
+			else
+			{
+				printf ("%5d", fuelCounts[i]);
+			}
 		}
-		else
+
+		//Print Runway Statuses
+		printf (" |");
+		for (i = 0; i < NUM_RUNWAYS; i++)
 		{
-			printf ("%5d", fuelCounts[i]);
+			printf ("%3c ", runwayStatus[i]);
 		}
-	}
 
-	//Print Runway Statuses
-	printf (" |");
-	for (i = 0; i < NUM_RUNWAYS; i++)
-	{
-		printf ("%3c ", runwayStatus[i]);
-	}
+		//Print Crashed Planes
+		printf ("%6d |", crashedPlanes);
 
-	//Print Crashed Planes
-	printf ("%6d |", crashedPlanes);
+		//Print Takeoff Queue and Landing Queue Lengths
+		printf ("%8d %8d\n", airportLengthOfTakeoffQueue (&sTheAirport),
+						airportLengthOfLandingQueue (&sTheAirport));
 
-	//Print Takeoff Queue and Landing Queue Lengths
-	printf ("%8d %8d\n", airportLengthOfTakeoffQueue (&sTheAirport),
-					airportLengthOfLandingQueue (&sTheAirport));
+		//******************** 7) Increment Clock ********************
+		if (currentTick % HEADER_TICK_FREQUENCY == 0)
+		{
+			printHeader ();
+		}
+		currentTick++;
 
-	//******************** 7) Increment Clock ********************
-	if (currentTick % HEADER_TICK_FREQUENCY == 0)
-	{
-		printHeader ();
-	}
-	currentTick++;
-
-	//******************** 8) Repeat ********************
-	}
+		//******************** 8) Repeat Main Loop ********************
+		//					until airport is empty and end of file is reached
+		}
 
 	//******************** 9) Print Summary ********************
-	printf ("\nAverage takeoff waiting time: %.6g\n", totalTakeoffWaitingTime / (double)totalTakeoffs);
-	printf ("Average landing waiting time: %.6g\n", totalLandingWaitingTime / (double)totalLandings);
-	printf ("Average flying time remaining on landing: %.6g\n", totalFuelRemainingOnLanding / (double)totalLandings);
-	printf ("Number of planes landing with zero fuel: %d\n", emergencyLandings);
-	printf ("Number of crashes: %d", totalCrashedPlanes);
+	printf ("\nAverage takeoff waiting time: %.6g\n",
+					totalTakeoffWaitingTime / (double)totalTakeoffs);
+	printf ("Average landing waiting time: %.6g\n", totalLandingWaitingTime /
+					(double)totalLandings);
+	printf ("Average flying time remaining on landing: %.6g\n",
+					totalFuelRemainingOnLanding / (double)totalLandings);
+	printf ("Number of planes landing with zero fuel: %d\n",
+					emergencyLandings);
+	printf ("Number of crashes: %d",
+					totalCrashedPlanes);
 
+	//Terminate Airport and close the file
 	airportTerminate (&sTheAirport);
 	fclose (inFile);
 
