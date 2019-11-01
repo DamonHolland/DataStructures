@@ -35,8 +35,23 @@ static void processError (const char *pszFunctionName, int errorCode)
 /**************************************************************************
 *										Allocation and Deallocation
 **************************************************************************/
+/*************************************************************************
+ Function: 	 	queueCreate
+
+ Description: Creates and initializes the queue
+
+ Parameters:	psQueue - pointer to the queue to create
+
+ Returned:	 	None
+ ************************************************************************/
 extern void queueCreate (QueuePtr psQueue)
 {
+	//Error Checking
+	if (NULL == psQueue)
+	{
+		processError ("queueCreate", ERROR_INVALID_Q);
+	}
+
 	pqueueCreate (&psQueue->sTheQueue);
 
 	//Error Checking
@@ -48,9 +63,23 @@ extern void queueCreate (QueuePtr psQueue)
 	return;
 }
 
+/*************************************************************************
+ Function: 	 	queueTerminate
 
+ Description: Terminates and frees memory of the queue
+
+ Parameters:	psQueue - pointer to the queue to terminate
+
+ Returned:	 	None
+ ************************************************************************/
 extern void queueTerminate (QueuePtr psQueue)
 {
+	//Error Checking
+	if (NULL == psQueue)
+	{
+		processError ("queueTerminate", ERROR_INVALID_Q);
+	}
+
 	pqueueTerminate (&psQueue->sTheQueue);
 
 	//Error Checking
@@ -62,6 +91,15 @@ extern void queueTerminate (QueuePtr psQueue)
 	return;
 }
 
+/*************************************************************************
+ Function: 	 	queueLoadErrorMessages
+
+ Description: Loads the error message strings for other functions to use
+
+ Parameters:	none
+
+ Returned:	 	None
+ ************************************************************************/
 extern void queueLoadErrorMessages ()
 {
 	pqueueLoadErrorMessages ();
@@ -72,6 +110,16 @@ extern void queueLoadErrorMessages ()
 /**************************************************************************
 *									Checking number of elements in queue
 **************************************************************************/
+/*************************************************************************
+ Function: 	 	queueSize
+
+ Description: Returns the size of the queue
+
+ Parameters:	psQueue - pointer to the queue to retrieve the size of
+
+ Returned:	 	int - an integer which contains the number of elements in
+ 	 	 	 	 	 	 	 	 	 	the queue
+ ************************************************************************/
 extern int queueSize (const QueuePtr psQueue)
 {
 	//Error Checking
@@ -83,6 +131,16 @@ extern int queueSize (const QueuePtr psQueue)
 	return pqueueSize (&psQueue->sTheQueue);
 }
 
+/*************************************************************************
+ Function: 	 	queueIsEmpty
+
+ Description: Returns whether or not the queue is empty
+
+ Parameters:	psQueue - pointer to the queue to check is empty or not
+
+ Returned:	 	bool - a boolean which contains true if the queue is empty
+ 	 	 	 	 	 	 	 	 	 	 or contains false if the queue is not empty
+ ************************************************************************/
 extern bool queueIsEmpty (const QueuePtr psQueue)
 {
 	//Error Checking
@@ -94,11 +152,22 @@ extern bool queueIsEmpty (const QueuePtr psQueue)
 	return (EMPTY_Q == queueSize (psQueue));
 }
 
-
-
 /**************************************************************************
 *									Inserting and retrieving values
 **************************************************************************/
+/*************************************************************************
+ Function: 	 	queueEnqueue
+
+ Description: Inserts data into the end of the queue.
+
+ Parameters:	psQueue - pointer to the queue to add data
+ 	 	 	 	 	 	 	pBuffer - pointer to the data you would like to add to the
+ 	 	 	 	 	 	 	 	 	 	 	 	queue
+ 	 	 	 	 	 	 	size - integer that contains the size in bytes of the data
+ 	 	 	 	 	 	 				 you are adding
+
+ Returned:	 	None
+ ************************************************************************/
 extern void queueEnqueue (QueuePtr psQueue, const void *pBuffer, int size)
 {
 	//Error Checking
@@ -116,6 +185,21 @@ extern void queueEnqueue (QueuePtr psQueue, const void *pBuffer, int size)
 	return;
 }
 
+/*************************************************************************
+ Function: 	 	queueDequeue
+
+ Description: Removes the data from the front of the queue and returns the
+ 	 	 	 	 	 	  data
+
+ Parameters:	psQueue - pointer to the queue to remove data from
+ 	 	 	 	 	 	 	pBuffer - pointer to the buffer that will store the removed
+ 	 	 	 	 	 	 					  data
+ 	 	 	 	 	 	 	size - integer that contains the size in bytes of the data
+ 	 	 	 	 	 	 				 you are removing
+
+ Returned:	 	void* - the pointer to the buffer where the removed data is
+ 	 	 	 	 	 	 	 	 	 	 	stored
+ ************************************************************************/
 extern void *queueDequeue (QueuePtr psQueue, void *pBuffer, int size)
 {
 	int tempPriorityBuffer;
@@ -142,6 +226,20 @@ extern void *queueDequeue (QueuePtr psQueue, void *pBuffer, int size)
 /**************************************************************************
 *													Peek Operations
 **************************************************************************/
+/*************************************************************************
+ Function: 	 	queuePeek
+
+ Description: Peeks the data from the front of the queue
+
+ Parameters:	psQueue - pointer to the queue to peek the data of
+ 	 	 	 	 	 	 	pBuffer - pointer to the buffer that will store the peeked
+ 	 	 	 	 	 	 	 	 	 	 	  data
+ 	 	 	 	 	 	 	size - integer that contains the size in bytes of the data
+ 	 	 	 	 	 	 				 you are peeking
+
+ Returned:	 	void* - the pointer to the buffer where the peeked data is
+ 	 	 	 	 	 	 	 	 	 	 	stored
+ ************************************************************************/
 extern void *queuePeek (QueuePtr psQueue, void *pBuffer, int size)
 {
 	int tempPriorityBuffer;

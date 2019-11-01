@@ -45,6 +45,12 @@ static void processError (const char *pszFunctionName, int errorCode)
  ************************************************************************/
 void pqueueCreate (PriorityQueuePtr psQueue)
 {
+	//Error Checking
+	if (NULL == psQueue)
+	{
+		processError ("pqueueCreate", ERROR_INVALID_PQ);
+	}
+
 	lstCreate (&psQueue->sTheList);
 
 	//Error Checking
@@ -67,6 +73,12 @@ void pqueueCreate (PriorityQueuePtr psQueue)
  ************************************************************************/
 void pqueueTerminate (PriorityQueuePtr psQueue)
 {
+	//Error Checking
+	if (NULL == psQueue)
+	{
+		processError ("pqueueTerminate", ERROR_INVALID_PQ);
+	}
+
 	PriorityQueueElement sCurrentElement;
 
 	if (!pqueueIsEmpty (psQueue))

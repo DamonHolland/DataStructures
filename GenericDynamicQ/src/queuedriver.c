@@ -4,7 +4,8 @@ Author:     Damon Holland
 Date:       Oct 20, 2019
 Class:      CS300
 Assignment: Airport
-Purpose:    This file is the driver used to test the queue
+Purpose:    This file is the driver that tests all of the functions for
+						the queue.
 *************************************************************************/
 
 #include <stdio.h>
@@ -63,7 +64,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 /*************************************************************************
  Function: 	 	main
 
- Description: Test all the functionality of the Queue
+ Description: Test all the functions of the queue
 
  Parameters:	none
 
@@ -93,7 +94,7 @@ int main()
 	//Iterator to be used for loop testing
 	int i = 0;
 
-	//Boolean to store result multiple conditions
+	//Boolean to store result of multiple conditions
 	bool bLoopTest = bLOOP_TEST_RESET;
 
 	//Variables used to store and test data from queue
@@ -117,12 +118,12 @@ int main()
 	queueTerminate (&sTheQueue);
 	queueCreate (&sTheQueue);
 	//Ensure the size is 0 after creation
-	assert (queueSize (&sTheQueue) == 0,
+	assert (0 == queueSize (&sTheQueue),
 					"queueSize returns 0 after creation",
 					"queueSize DOES NOT return 0 after creation");
 	//Now insert one element and ensure the size becomes 1
 	queueEnqueue (&sTheQueue, &EXPECTED_INT, sizeof (EXPECTED_INT));
-	assert (queueSize (&sTheQueue) == 1,
+	assert (1 == queueSize (&sTheQueue),
 					"queueSize returns 1 after adding 1 element",
 					"queueSize DOES NOT return 1 after adding 1 element");
 	//Test queue size within a loop
@@ -297,7 +298,6 @@ int main()
 	assert (queueIsEmpty (&sTheQueue),
 					"Queue is empty after termination",
 					"Queue is NOT empty after termination");
-
 
 
 	return EXIT_SUCCESS;
