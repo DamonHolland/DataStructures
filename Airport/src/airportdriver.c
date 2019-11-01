@@ -24,7 +24,7 @@ static void printHeader ()
 int main (int argc, char *argv[])
 {
 	//******************** CONSTANT VARIABLES ********************
-	const int FUEL_DECREMENT = -1;
+	const int FUEL_DECREMENT = 1;
 	const int NUM_RUNWAYS = 3;
 	const int MAX_PLANES_ADDED = 3, PLANE1 = 0, PLANE2 = 1, PLANE3 = 2;
 	const int NO_FUEL = 0;
