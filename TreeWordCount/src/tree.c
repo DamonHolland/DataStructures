@@ -31,29 +31,6 @@ static void processError (const char *pszFunctionName, int errorCode)
 	exit (EXIT_FAILURE);
 }
 
-static void trTerminateNode (TreeNodePtr psTree)
-{
-	if (NULL != psTree)
-	{
-		if (NULL == psTree->psLeft && NULL == psTree->psRight)
-		{
-			printf ("Freeing Node: %s\n", psTree->szWord);
-			free (psTree);
-			psTree = NULL;
-		}
-		else
-		{
-			trTerminateNode(psTree->psLeft);
-			trTerminateNode(psTree->psRight);
-			printf ("Freeing Node: %s\n", psTree->szWord);
-			free (psTree);
-			psTree = NULL;
-		}
-	}
-
-		return;
-}
-
 extern void trLoadErrorMessages ()
 {
 	LOAD_ERRORS;
@@ -67,9 +44,6 @@ extern void trCreate (TreeNodePtr *hsTree)
 	{
 		processError ("trCreate", TR_NO_CREATE_ERROR);
 	}
-
-	//Empty the tree
-	trTerminate (hsTree);
 
 	*hsTree = NULL;
 
@@ -86,9 +60,21 @@ extern void trTerminate (TreeNodePtr *hsTree)
 		processError ("trTerminate", TR_NO_TERMINATE_ERROR);
 	}
 
-	trTerminateNode (*hsTree);
-
-	*hsTree = NULL;
+	if (NULL != *hsTree)
+	{
+		if (NULL == (*hsTree)->psLeft && NULL == (*hsTree)->psRight)
+		{
+			free (*hsTree);
+			*hsTree = NULL;
+		}
+		else
+		{
+			trTerminate(&(*hsTree)->psLeft);
+			trTerminate(&(*hsTree)->psRight);
+			free (*hsTree);
+			*hsTree = NULL;
+		}
+	}
 
 	return;
 }
@@ -223,7 +209,7 @@ extern bool trUpdate (TreeNodePtr psTree, const char* key, int value)
 
 extern bool trFind (const TreeNodePtr psTree, const char* key, int *pValue)
 {
-	bool bFound = false;
+	bool bFound = true;
 	TreeNodePtr psCurrentNode = psTree;
 
 	//Error Checking
@@ -239,7 +225,7 @@ extern bool trFind (const TreeNodePtr psTree, const char* key, int *pValue)
 	//Look for the key in the tree, stop when found or reached the end of tree
 	while (psCurrentNode != NULL && strncmp(psCurrentNode->szWord, key, WORD_MAX) != 0)
 	{
-		if (psCurrentNode->szWord < key)
+		if (strncmp(psCurrentNode->szWord, key, WORD_MAX) > 0)
 		{
 			psCurrentNode = psCurrentNode->psLeft;
 		}
@@ -276,14 +262,14 @@ extern void trPrintInOrder(const TreeNodePtr psTree)
 		//If the current node is a leaf, print it
 		if (NULL == psTree->psLeft && NULL == psTree->psRight)
 		{
-			printf ("%s\n", psTree->szWord);
+			printf ("%s %d\n", psTree->szWord, psTree->count);
 		}
 		else
 		{
 			//If the node is not a leaf, print the left tree first, then
 			//print itself, then print the right tree
 			trPrintInOrder(psTree->psLeft);
-			printf ("%s\n", psTree->szWord);
+			printf ("%s %d\n", psTree->szWord, psTree->count);
 			trPrintInOrder(psTree->psRight);
 		}
 	}

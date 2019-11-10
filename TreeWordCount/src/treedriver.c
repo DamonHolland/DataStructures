@@ -63,22 +63,25 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 
 int main ()
 {
-	TreeNodePtr psRoot = NULL;
+	TreeNodePtr psRoot;
 
 	trLoadErrorMessages ();
 
-	//******************** Test queueCreate ********************
+	//******************** Test trCreate ********************
 	trCreate (&psRoot);
+	//Ensure the tree is initially empty
 	assert (trIsEmpty (psRoot), "Tree empty after creation",
 					"Tree is NOT empty after creation");
 
+	//******************** Test trInsert ********************
 	trInsert (&psRoot, "F", 6);
-	trInsert (&psRoot, "C", 3);
-	trInsert (&psRoot, "A", 1);
-	trInsert (&psRoot, "B", 2);
-	trInsert (&psRoot, "G", 7);
-	trInsert (&psRoot, "D", 4);
-	trInsert (&psRoot, "I", 9);
+	assert (!trIsEmpty (psRoot), "Tree is not empty after insertion",
+						"Tree IS empty after insertion");
+	trInsert (&psRoot, "D", 6);
+	trInsert (&psRoot, "A", 6);
+	trInsert (&psRoot, "C", 6);
+	trInsert (&psRoot, "H", 6);
+	trInsert (&psRoot, "G", 6);
 
 	trUpdate (psRoot, "I", 12);
 
@@ -88,7 +91,5 @@ int main ()
 	assert (trIsEmpty (psRoot), "Tree empty after Termination",
 					"Tree is NOT empty after Termination");
 
-	printf ("Build Success\n");
-
 	return EXIT_SUCCESS;
-};
+}

@@ -20,8 +20,8 @@ bin:
 bin/treedriver: bin/treedriver.o bin/tree.o
 	${CC} ${CFLAGS} bin/treedriver.o bin/tree.o -o bin/treedriver
 
-bin/treedriver.o: src/treedriver.c include/tree.h
-	${CC} ${CFLAGS} -c src/treedriver.c -o bin/treedriver.o
+bin/treedriver.o: src/wordCountDriver.c include/tree.h
+	${CC} ${CFLAGS} -c src/wordCountDriver.c -o bin/treedriver.o
 	 
 bin/tree.o: src/tree.c include/tree.h
 	${CC} ${CFLAGS} -c src/tree.c -o bin/tree.o
