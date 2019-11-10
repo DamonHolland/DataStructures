@@ -152,7 +152,33 @@ extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 
 extern bool trUpdate (TreeNodePtr psTree, const char* key, int value)
 {
-	return false;
+	bool bKeyExists = false;
+	int tempValue;
+	TreeNodePtr psCurrentNode = psTree;
+
+	//Error Checking
+	if (NULL == key)
+	{
+		processError ("trUpdate", TR_NO_BUFFER_ERROR);
+	}
+
+	if (trFind (psTree, key, &tempValue))
+	{
+		bKeyExists = true;
+		while (strncmp(psCurrentNode->szWord, key, WORD_MAX) != 0)
+		{
+			if (strncmp(psCurrentNode->szWord, key, WORD_MAX) > 0)
+			{
+				psCurrentNode = psCurrentNode->psLeft;
+			}
+			else
+			{
+				psCurrentNode = psCurrentNode->psRight;
+			}
+		}
+		psCurrentNode->count = value;
+	}
+	return bKeyExists;
 }
 // results: if the tree is valid, and the key does exist in the
 //					tree, update the node with the new value passed in and return
@@ -176,7 +202,7 @@ extern bool trFind (const TreeNodePtr psTree, const char* key, int *pValue)
 	}
 
 	//Look for the key in the tree, stop when found or reached the end of tree
-	while (psCurrentNode != NULL && psCurrentNode->szWord != key)
+	while (psCurrentNode != NULL && strncmp(psCurrentNode->szWord, key, WORD_MAX) != 0)
 	{
 		if (psCurrentNode->szWord < key)
 		{

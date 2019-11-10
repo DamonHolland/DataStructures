@@ -80,6 +80,8 @@ int main ()
 	trInsert (&psRoot, "D", 4);
 	trInsert (&psRoot, "I", 9);
 
+	trUpdate (psRoot, "I", 12);
+
 	trPrintInOrder (psRoot);
 
 	printf ("Build Success\n");
