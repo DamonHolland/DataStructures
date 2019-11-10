@@ -31,6 +31,29 @@ static void processError (const char *pszFunctionName, int errorCode)
 	exit (EXIT_FAILURE);
 }
 
+static void trTerminateNode (TreeNodePtr psTree)
+{
+	if (NULL != psTree)
+	{
+		if (NULL == psTree->psLeft && NULL == psTree->psRight)
+		{
+			printf ("Freeing Node: %s\n", psTree->szWord);
+			free (psTree);
+			psTree = NULL;
+		}
+		else
+		{
+			trTerminateNode(psTree->psLeft);
+			trTerminateNode(psTree->psRight);
+			printf ("Freeing Node: %s\n", psTree->szWord);
+			free (psTree);
+			psTree = NULL;
+		}
+	}
+
+		return;
+}
+
 extern void trLoadErrorMessages ()
 {
 	LOAD_ERRORS;
@@ -48,6 +71,8 @@ extern void trCreate (TreeNodePtr *hsTree)
 	//Empty the tree
 	trTerminate (hsTree);
 
+	*hsTree = NULL;
+
 	return;
 }
 // results: If the tree can be created, then the tree exists and is empty;
@@ -55,6 +80,16 @@ extern void trCreate (TreeNodePtr *hsTree)
 
 extern void trTerminate (TreeNodePtr *hsTree)
 {
+	//Error Checking
+	if (NULL == hsTree)
+	{
+		processError ("trTerminate", TR_NO_TERMINATE_ERROR);
+	}
+
+	trTerminateNode (*hsTree);
+
+	*hsTree = NULL;
+
 	return;
 }
 // results: If the tree can be terminated, then the tree no longer exists

@@ -63,7 +63,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 
 int main ()
 {
-	TreeNodePtr psRoot;
+	TreeNodePtr psRoot = NULL;
 
 	trLoadErrorMessages ();
 
@@ -83,6 +83,10 @@ int main ()
 	trUpdate (psRoot, "I", 12);
 
 	trPrintInOrder (psRoot);
+
+	trTerminate (&psRoot);
+	assert (trIsEmpty (psRoot), "Tree empty after Termination",
+					"Tree is NOT empty after Termination");
 
 	printf ("Build Success\n");
 
