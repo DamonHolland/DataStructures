@@ -209,24 +209,25 @@ extern bool trFind (const TreeNodePtr psTree, const char* key, int *pValue)
 
 extern void trPrintInOrder(const TreeNodePtr psTree)
 {
-
 	//If the given node is NULL, do nothing
-	if (NULL == psTree)
+	if (NULL != psTree)
 	{
-		return;
+		//If the current node is a leaf, print it
+		if (NULL == psTree->psLeft && NULL == psTree->psRight)
+		{
+			printf ("%s\n", psTree->szWord);
+		}
+		else
+		{
+			//If the node is not a leaf, print the left tree first, then
+			//print itself, then print the right tree
+			trPrintInOrder(psTree->psLeft);
+			printf ("%s\n", psTree->szWord);
+			trPrintInOrder(psTree->psRight);
+		}
 	}
 
-	//The current node is a leaf, so print it
-	if (NULL == psTree->psLeft && NULL == psTree->psRight)
-	{
-		printf ("%s\n", psTree->szWord);
-	}
-	else
-	{
-		trPrintInOrder(psTree->psLeft);
-		trPrintInOrder(psTree->psRight);
-		printf ("%s\n", psTree->szWord);
-	}
+	return;
 }
 // results: if the tree is valid, print the key and value for each node
 //					in key order (ascending).
