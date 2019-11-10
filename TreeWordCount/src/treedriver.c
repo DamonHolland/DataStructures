@@ -72,14 +72,15 @@ int main ()
 	assert (trIsEmpty (psRoot), "Tree empty after creation",
 					"Tree is NOT empty after creation");
 
-	trInsert (&psRoot, "10", 5);
-	trInsert (&psRoot, "5", 5);
-	trInsert (&psRoot, "6", 5);
-	trInsert (&psRoot, "4", 5);
-	trInsert (&psRoot, "12", 5);
-	trInsert (&psRoot, "13", 5);
-	trInsert (&psRoot, "11", 5);
+	trInsert (&psRoot, "F", 5);
+	trInsert (&psRoot, "C", 5);
+	trInsert (&psRoot, "A", 5);
+	trInsert (&psRoot, "B", 5);
+	trInsert (&psRoot, "G", 5);
+	trInsert (&psRoot, "D", 5);
+	trInsert (&psRoot, "I", 5);
 
+	trPrintInOrder (psRoot);
 
 	printf ("Build Success\n");
 

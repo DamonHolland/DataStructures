@@ -79,6 +79,7 @@ extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 {
 	bool bIsNewKey = false;
 	TreeNodePtr psCurrentNode = *hsTree;
+	TreeNodePtr psPrevNode;
 
 	//Error Checking
 	if (NULL == hsTree)
@@ -90,9 +91,10 @@ extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 		processError ("trInsert", TR_NO_BUFFER_ERROR);
 	}
 
+	//If the key is not already in the tree, add it
 	if (!trFind (psCurrentNode, key, &value))
 	{
-
+		//If the tree is empty, create a new root node
 		if (trIsEmpty (psCurrentNode))
 		{
 			psCurrentNode = (TreeNodePtr) malloc (sizeof (TreeNode));
@@ -102,11 +104,14 @@ extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 			(psCurrentNode)->psRight = NULL;
 			*hsTree = psCurrentNode;
 		}
+		//If the tree is not empty, find where it belongs and add it
 		else
 		{
+			//Search through the tree until you find a null node
 			while (psCurrentNode != NULL)
 			{
-				if (psCurrentNode->szWord > key)
+				psPrevNode = psCurrentNode;
+				if (strncmp(psCurrentNode->szWord, key, WORD_MAX) > 0)
 				{
 					psCurrentNode = psCurrentNode->psLeft;
 				}
@@ -114,13 +119,22 @@ extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 				{
 					psCurrentNode = psCurrentNode->psRight;
 				}
-				psCurrentNode = (TreeNodePtr) malloc (sizeof (TreeNode));
-				strncpy((psCurrentNode)->szWord , key, WORD_MAX);
-				(psCurrentNode)->count = value;
-				(psCurrentNode)->psLeft = NULL;
-				(psCurrentNode)->psRight = NULL;
 			}
-
+			psCurrentNode = psPrevNode;
+			if (strncmp(psCurrentNode->szWord, key, WORD_MAX) > 0)
+			{
+				psCurrentNode->psLeft = (TreeNodePtr) malloc (sizeof (TreeNode));
+				psCurrentNode = psCurrentNode->psLeft;
+			}
+			else
+			{
+				psCurrentNode->psRight = (TreeNodePtr) malloc (sizeof (TreeNode));
+				psCurrentNode = psCurrentNode->psRight;
+			}
+			strncpy((psCurrentNode)->szWord , key, WORD_MAX);
+			(psCurrentNode)->count = value;
+			(psCurrentNode)->psLeft = NULL;
+			(psCurrentNode)->psRight = NULL;
 		}
 
 		bIsNewKey = true;
