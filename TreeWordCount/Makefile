@@ -28,7 +28,7 @@ bin/tree.o: src/tree.c include/tree.h
 	
 valgrind: bin/treedriver
 	valgrind -v --leak-check=yes --track-origins=yes --leak-check=full \
- 	--show-leak-kinds=all bin/treedriver
+ 	--show-leak-kinds=all bin/treedriver data/words.txt
  	
 tarball: clean
 	tar czf ../cs300_5_holl9358.tar.gz ../TreeWordCount

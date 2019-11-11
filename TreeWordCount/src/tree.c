@@ -1,11 +1,12 @@
-/***************************************************************************
+/**************************************************************************
 File name:  tree.c
 Author:     Damon Holland
 Date:       Nov 4, 2019
 Class:      CS300
-Assignment: 
-Purpose:    
-***************************************************************************/
+Assignment: TreeWordCount
+Purpose:    Contains implementation for the functions declared in tree.h
+						Contains all of the functionality for the tree data structure
+**************************************************************************/
 
 #include "stdio.h"
 #include "../include/tree.h"
@@ -31,12 +32,31 @@ static void processError (const char *pszFunctionName, int errorCode)
 	exit (EXIT_FAILURE);
 }
 
+/*************************************************************************
+ Function: 	 	trLoadErrorMessages
+
+ Description: Loads the error message strings to be used for error
+ 	 	 	 	 	 	 	messages in the program
+
+ Parameters:	None
+
+ Returned:	 	None
+ ************************************************************************/
 extern void trLoadErrorMessages ()
 {
 	LOAD_ERRORS;
 	return;
 }
 
+/*************************************************************************
+ Function: 	 	trCreate
+
+ Description: Initializes the tree so it can be used
+
+ Parameters:	hsTree - A handle to the tree to create
+
+ Returned:	 	None
+ ************************************************************************/
 extern void trCreate (TreeNodePtr *hsTree)
 {
 	//Error Checking
@@ -45,13 +65,21 @@ extern void trCreate (TreeNodePtr *hsTree)
 		processError ("trCreate", TR_NO_CREATE_ERROR);
 	}
 
+	//Set the root node to a null pointer
 	*hsTree = NULL;
 
 	return;
 }
-// results: If the tree can be created, then the tree exists and is empty;
-//					otherwise, TR_NO_CREATE_ERROR if psTree is NULL
 
+/*************************************************************************
+ Function: 	 	trTerminate
+
+ Description: Terminates the tree, freeing the memory on the heap
+
+ Parameters:	hsTree - A handle to the tree to terminate
+
+ Returned:	 	None
+ ************************************************************************/
 extern void trTerminate (TreeNodePtr *hsTree)
 {
 	//Error Checking
@@ -60,8 +88,10 @@ extern void trTerminate (TreeNodePtr *hsTree)
 		processError ("trTerminate", TR_NO_TERMINATE_ERROR);
 	}
 
+	//Do nothing if the given node is NULL
 	if (NULL != *hsTree)
 	{
+		//If the given node is a leaf, free its memory
 		if (NULL == (*hsTree)->psLeft && NULL == (*hsTree)->psRight)
 		{
 			free (*hsTree);
@@ -69,8 +99,11 @@ extern void trTerminate (TreeNodePtr *hsTree)
 		}
 		else
 		{
-			trTerminate(&(*hsTree)->psLeft);
-			trTerminate(&(*hsTree)->psRight);
+			//If the given node is not a leaf, then treat it like the root of a
+			//tree, and free the nodes to the left and right sides of the tree,
+			//then itself
+			trTerminate (&(*hsTree)->psLeft);
+			trTerminate (&(*hsTree)->psRight);
 			free (*hsTree);
 			*hsTree = NULL;
 		}
@@ -78,9 +111,16 @@ extern void trTerminate (TreeNodePtr *hsTree)
 
 	return;
 }
-// results: If the tree can be terminated, then the tree no longer exists
-//				  and is empty; otherwise, TR_NO_TERMINATE_ERROR
 
+/*************************************************************************
+ Function: 	 	trIsEmpty
+
+ Description: Checks if the given tree is empty or not
+
+ Parameters:	psTree - A pointer to the tree to check if empty or not
+
+ Returned:	 	bool - true if the tree is empty, false if not
+ ************************************************************************/
 extern bool trIsEmpty (const TreeNodePtr psTree)
 {
 	bool bIsEmpty = false;
@@ -92,10 +132,21 @@ extern bool trIsEmpty (const TreeNodePtr psTree)
 
 	return bIsEmpty;
 }
-// results: If tree is empty, return true; otherwise, return false
-// 					error code priority: TR_NO_MEMORY_ERROR
 
+/*************************************************************************
+ Function: 	 	trInsert
 
+ Description: Attempts to insert a new node into the tree. If the tree
+ 	 	 	 	 	 	  already contains a node with the same key, does nothing
+
+ Parameters:	hsTree - A handle to the tree to insert a node into
+ 	 	 	 	 	 	 	key - a string containing the key for the node
+ 	 	 	 	 	 	 	value - an integer containing the data to store in the node
+
+ Returned:	 	bool - true if the key was not already in the tree and a new
+ 	 	 	 	 	 	 	 	 	 	 node was added, false if the key was already in the
+ 	 	 	 	 	 	 	 	 	 	 tree and was not added
+ ************************************************************************/
 extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 {
 	bool bIsNewKey = false;
@@ -119,20 +170,20 @@ extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 		if (trIsEmpty (psCurrentNode))
 		{
 			psCurrentNode = (TreeNodePtr) malloc (sizeof (TreeNode));
-			strncpy((psCurrentNode)->szWord , key, WORD_MAX);
-			(psCurrentNode)->count = value;
-			(psCurrentNode)->psLeft = NULL;
-			(psCurrentNode)->psRight = NULL;
+			strncpy (psCurrentNode->szWord , key, WORD_MAX);
+			psCurrentNode->count = value;
+			psCurrentNode->psLeft = NULL;
+			psCurrentNode->psRight = NULL;
 			*hsTree = psCurrentNode;
 		}
-		//If the tree is not empty, find where it belongs and add it
+		//If the tree is not empty, find where the new node belongs and add it
 		else
 		{
-			//Search through the tree until you find a null node
+			//Search through the tree until you find a NULL node
 			while (psCurrentNode != NULL)
 			{
 				psPrevNode = psCurrentNode;
-				if (strncmp(psCurrentNode->szWord, key, WORD_MAX) > 0)
+				if (strncmp (psCurrentNode->szWord, key, WORD_MAX) > 0)
 				{
 					psCurrentNode = psCurrentNode->psLeft;
 				}
@@ -141,8 +192,10 @@ extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 					psCurrentNode = psCurrentNode->psRight;
 				}
 			}
+			//Move back to the node before the NULL node
 			psCurrentNode = psPrevNode;
-			if (strncmp(psCurrentNode->szWord, key, WORD_MAX) > 0)
+			//Insert the new node where it belongs
+			if (strncmp (psCurrentNode->szWord, key, WORD_MAX) > 0)
 			{
 				psCurrentNode->psLeft = (TreeNodePtr) malloc (sizeof (TreeNode));
 				psCurrentNode = psCurrentNode->psLeft;
@@ -152,25 +205,30 @@ extern bool trInsert (TreeNodePtr *hsTree, const char* key, int value)
 				psCurrentNode->psRight = (TreeNodePtr) malloc (sizeof (TreeNode));
 				psCurrentNode = psCurrentNode->psRight;
 			}
-			strncpy((psCurrentNode)->szWord , key, WORD_MAX);
-			(psCurrentNode)->count = value;
-			(psCurrentNode)->psLeft = NULL;
-			(psCurrentNode)->psRight = NULL;
+			strncpy (psCurrentNode->szWord , key, WORD_MAX);
+			psCurrentNode->count = value;
+			psCurrentNode->psLeft = NULL;
+			psCurrentNode->psRight = NULL;
 		}
-
 		bIsNewKey = true;
 	}
 
-
-
 	return bIsNewKey;
 }
-// results: if the tree is valid, and the key does not exist in the
-//					tree, insert the key/value and return true
-//					If the key does exist in the tree return false and
-//					do not alter the tree
-//					error code priority: TR_NO_MEMORY_ERROR
 
+/*************************************************************************
+ Function: 	 	trUpdate
+
+ Description: Updates the data of the node with the given key in the tree
+
+ Parameters:	psTree - A pointer to the tree to update the data of
+ 	 	 	 	 	 	 	key - a strong containing the key of the node to update
+ 	 	 	 	 	 	 	value - the new data to be set in the node
+
+ Returned:	 	bool - true if the key was contained in the tree and the
+ 	 	 	 	 	 	 	 	 	 	 node was updated, false if the key was not contained
+ 	 	 	 	 	 	 	 	 	 	 	in the tree and the node was not updated.
+ ************************************************************************/
 extern bool trUpdate (TreeNodePtr psTree, const char* key, int value)
 {
 	bool bKeyExists = false;
@@ -183,12 +241,14 @@ extern bool trUpdate (TreeNodePtr psTree, const char* key, int value)
 		processError ("trUpdate", TR_NO_BUFFER_ERROR);
 	}
 
+	//Only update the key if it exists
 	if (trFind (psTree, key, &tempValue))
 	{
 		bKeyExists = true;
-		while (strncmp(psCurrentNode->szWord, key, WORD_MAX) != 0)
+		//Navigate the tree until the matching node is found
+		while (strncmp (psCurrentNode->szWord, key, WORD_MAX) != 0)
 		{
-			if (strncmp(psCurrentNode->szWord, key, WORD_MAX) > 0)
+			if (strncmp (psCurrentNode->szWord, key, WORD_MAX) > 0)
 			{
 				psCurrentNode = psCurrentNode->psLeft;
 			}
@@ -197,16 +257,28 @@ extern bool trUpdate (TreeNodePtr psTree, const char* key, int value)
 				psCurrentNode = psCurrentNode->psRight;
 			}
 		}
+		//Set the new data in the node to the given value
 		psCurrentNode->count = value;
 	}
+
 	return bKeyExists;
 }
-// results: if the tree is valid, and the key does exist in the
-//					tree, update the node with the new value passed in and return
-//					true.  If the key does not exist in the tree, return false
-//					and do not alter the tree.
-//					error code priority: TR_NO_MEMORY_ERROR
 
+/*************************************************************************
+ Function: 	 	trFind
+
+ Description: Retrieves the data in the tree with the given key
+
+ Parameters:	psTree - pointer to the tree to retrieve data from
+ 	 	 	 	 	 	 	key - a string containing the key of the node to
+ 	 	 	 	 	 	 				retrieve data from
+ 	 	 	 	 	 	 	pValue - a pointer to the integer that will be used to store
+ 	 	 	 	 	 	 					 the retrieved data
+
+ Returned:	 	bool - true if a node with the given key was found and the
+ 	 	 	 	 	 	 	 	 	 	 data was retrieved, false if a node with the given
+ 	 	 	 	 	 	 	 	 	 	 key was not found.
+ ************************************************************************/
 extern bool trFind (const TreeNodePtr psTree, const char* key, int *pValue)
 {
 	bool bFound = true;
@@ -222,10 +294,11 @@ extern bool trFind (const TreeNodePtr psTree, const char* key, int *pValue)
 		processError ("trFind", TR_NO_BUFFER_ERROR);
 	}
 
-	//Look for the key in the tree, stop when found or reached the end of tree
-	while (psCurrentNode != NULL && strncmp(psCurrentNode->szWord, key, WORD_MAX) != 0)
+	//Look for the key in the tree, stop if found or reached the end of tree
+	while (psCurrentNode != NULL &&
+				 strncmp (psCurrentNode->szWord, key, WORD_MAX) != 0)
 	{
-		if (strncmp(psCurrentNode->szWord, key, WORD_MAX) > 0)
+		if (strncmp (psCurrentNode->szWord, key, WORD_MAX) > 0)
 		{
 			psCurrentNode = psCurrentNode->psLeft;
 		}
@@ -247,13 +320,17 @@ extern bool trFind (const TreeNodePtr psTree, const char* key, int *pValue)
 
 	return bFound;
 }
-// results: if the tree is valid, and the key does exist in the
-//					tree, return the value through pValue and return true.
-//					The user must supply valid memory for pValue.
-//					This function does not call malloc.
-//				 	If the key does not exist in the tree, return false;
-//					error code priority: TR_NO_MEMORY_ERROR, TR_NO_BUFFER_ERROR
 
+/*************************************************************************
+ Function: 	 	trPrintInOrder
+
+ Description: Prints the given tree in alphabetical order of the keys.
+ 	 	 	 	 	 	 	Each key will be printed with the accompanying data.
+
+ Parameters:	psTree - A pointer to the tree to print
+
+ Returned:	 	None
+ ************************************************************************/
 extern void trPrintInOrder(const TreeNodePtr psTree)
 {
 	//If the given node is NULL, do nothing
@@ -268,14 +345,12 @@ extern void trPrintInOrder(const TreeNodePtr psTree)
 		{
 			//If the node is not a leaf, print the left tree first, then
 			//print itself, then print the right tree
-			trPrintInOrder(psTree->psLeft);
+			trPrintInOrder (psTree->psLeft);
 			printf ("%s %d\n", psTree->szWord, psTree->count);
-			trPrintInOrder(psTree->psRight);
+			trPrintInOrder (psTree->psRight);
 		}
 	}
 
 	return;
 }
-// results: if the tree is valid, print the key and value for each node
-//					in key order (ascending).
-//					error code priority: TR_NO_MEMORY_ERROR
+

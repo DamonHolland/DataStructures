@@ -1,11 +1,12 @@
-/***************************************************************************
+/**************************************************************************
 File name:  treeDriver.c
 Author:     Damon Holland
 Date:       Nov 4, 2019
 Class:      CS300
-Assignment: 
-Purpose:    
-***************************************************************************/
+Assignment: TreeWordCount
+Purpose:    The test driver to test all of the functionality of the tree
+						data structure.
+**************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,19 +62,26 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 	}
 }
 
+/*************************************************************************
+ Function: 	 	main
+
+ Description: Test driver for the TreeWordCount assignment
+
+ Parameters:  None
+
+ Returned:	 	Exit Status
+ ************************************************************************/
 int main ()
 {
 	TreeNodePtr psRoot;
 
 	trLoadErrorMessages ();
 
-	//******************** Test trCreate ********************
 	trCreate (&psRoot);
 	//Ensure the tree is initially empty
 	assert (trIsEmpty (psRoot), "Tree empty after creation",
 					"Tree is NOT empty after creation");
 
-	//******************** Test trInsert ********************
 	trInsert (&psRoot, "F", 6);
 	assert (!trIsEmpty (psRoot), "Tree is not empty after insertion",
 						"Tree IS empty after insertion");
@@ -83,13 +91,15 @@ int main ()
 	trInsert (&psRoot, "H", 6);
 	trInsert (&psRoot, "G", 6);
 
-	trUpdate (psRoot, "I", 12);
+	trUpdate (psRoot, "G", 12);
 
 	trPrintInOrder (psRoot);
 
 	trTerminate (&psRoot);
 	assert (trIsEmpty (psRoot), "Tree empty after Termination",
 					"Tree is NOT empty after Termination");
+
+	//Visual examination of output required to ensure tree works correctly
 
 	return EXIT_SUCCESS;
 }
