@@ -55,7 +55,7 @@ typedef struct HashTable
 	List bucket[MAX_BUCKET_SIZE];
 } HashTable;
 
-int (*hashFunction)(void* pKey);
+typedef int (*hashFunction)(void* pKey);
 
 //*************************************************************************
 // Function prototypes
@@ -69,7 +69,7 @@ extern void htTerminate (HashTablePtr psHashTable);
 extern bool htIsEmpty (HashTablePtr psHashTable);
 
 extern bool htInsert (HashTablePtr psHashTable, void* pKey, int keySize,
-											void* pData, int dataSize, hashfunction);
+											void* pData, int dataSize, hashFunction hashFunc);
 
 extern bool htDelete ();
 

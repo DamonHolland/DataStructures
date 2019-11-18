@@ -17,14 +17,20 @@ all: bin bin/htdriver
 bin: 
 	mkdir -p bin
 
-bin/htdriver: bin/htdriver.o bin/ht.o
-	${CC} ${CFLAGS} bin/htdriver.o bin/ht.o -o bin/htdriver
+bin/htdriver: bin/htdriver.o bin/ht.o ../GenericDynamicList/bin/list.o
+	${CC} ${CFLAGS} bin/htdriver.o bin/ht.o \
+	../GenericDynamicList/bin/list.o -o bin/htdriver
 
-bin/htdriver.o: src/htdriver.c include/ht.h
+bin/htdriver.o: src/htdriver.c include/ht.h \
+	../GenericDynamicList/include/list.h 
 	${CC} ${CFLAGS} -c src/htdriver.c -o bin/htdriver.o
-	 
-bin/ht.o: src/ht.c include/ht.h
+
+bin/ht.o: src/ht.c include/ht.h ../GenericDynamicList/include/list.h 
 	${CC} ${CFLAGS} -c src/ht.c -o bin/ht.o
+	
+../GenericDynamicList/bin/list.o:
+	cd ../GenericDynamicList; make bin/list.o
  	
 clean:
 	rm -rf bin/*.o bin/htdriver
+	cd ../GenericDynamicList; make clean
