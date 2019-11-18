@@ -55,7 +55,7 @@ typedef struct HashTable
 	List bucket[MAX_BUCKET_SIZE];
 } HashTable;
 
-typedef int (*hashFunction)(void* pKey);
+typedef int (*hashFunction)(void* pKey, int keySize);
 
 //*************************************************************************
 // Function prototypes

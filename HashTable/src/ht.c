@@ -9,6 +9,7 @@ Purpose:
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "../../GenericDynamicList/include/list.h"
 #include "../include/ht.h"
@@ -23,7 +24,12 @@ void htLoadErrorMessages ()
 	return;
 }
 
-void htCreate (HashTablePtr psHashTable, int bucketSize){}
+void htCreate (HashTablePtr psHashTable, int bucketSize)
+{
+	psHashTable->bucketSize = bucketSize;
+
+	return;
+}
 
 void htTerminate (HashTablePtr psHashTable)
 {
@@ -32,12 +38,26 @@ void htTerminate (HashTablePtr psHashTable)
 
 bool htIsEmpty (HashTablePtr psHashTable)
 {
-	return false;
+
+	bool bIsEmpty = true;
+	int i;
+
+	for (i = 0; i < psHashTable->bucketSize && bIsEmpty; ++i)
+	{
+		if (!lstIsEmpty (&psHashTable->bucket[i]))
+		{
+			bIsEmpty = false;
+		}
+	}
+
+	return bIsEmpty;
 }
 
 bool htInsert (HashTablePtr psHashTable, void* pKey, int keySize,
 							 void* pData, int dataSize, hashFunction hashFunc)
 {
+	int hash = hashFunc (pKey, keySize) % psHashTable->bucketSize;
+	printf ("Hashed to: %d\n", hash);
 	return false;
 }
 
