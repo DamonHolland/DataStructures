@@ -40,6 +40,15 @@ void htCreate (HashTablePtr psHashTable, int bucketSize)
 
 void htTerminate (HashTablePtr psHashTable)
 {
+	int i;
+
+	for (i = 0; i < psHashTable->bucketSize; ++i)
+	{
+		lstTerminate (&psHashTable->bucket[i]);
+	}
+
+	psHashTable->bucketSize = 0;
+
 	return;
 }
 
@@ -102,16 +111,17 @@ void htPrint(HashTablePtr psHashTable, printFunction printFunc, int keySize,
 		if (!lstIsEmpty (&psHashTable->bucket[i]))
 		{
 			lstFirst (&psHashTable->bucket[i]);
+			for (j = 0; j < lstSize(&psHashTable->bucket[i]); ++j)
+			{
+				lstPeek (&psHashTable->bucket[i], &currentElement,
+						 	 	 sizeof (currentElement));
+				printf ("Bucket: %d | ", i);
+				printFunc (&currentElement.pKey, keySize, &currentElement.pData,
+								 	 dataSize);
+				lstNext (&psHashTable->bucket[i]);
 		}
-		for (j = 0; j < lstSize(&psHashTable->bucket[i]); ++j)
-		{
-			lstPeek (&psHashTable->bucket[i], &currentElement,
-						 	 sizeof (currentElement));
-			printf ("Bucket: %d | ", i);
-			printFunc (&currentElement.pKey, keySize, &currentElement.pData,
-								 dataSize);
-			lstNext (&psHashTable->bucket[i]);
 		}
 	}
+
 	return;
 }

@@ -119,5 +119,7 @@ int main()
 
 	htPrint (&sTheHashTable, printStringInt, STRING_KEY_SIZE , sizeof (int));
 
+	htTerminate (&sTheHashTable);
+
 	return EXIT_SUCCESS;
 }
