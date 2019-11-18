@@ -62,7 +62,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 
 int stringHash (void* pKey, int keySize)
 {
-	char aKey[keySize / sizeof (char)];
+	char aKey[keySize];
 	memcpy(&aKey, pKey, keySize);
 
 	int hash = 0, i;
@@ -75,24 +75,49 @@ int stringHash (void* pKey, int keySize)
 	return hash;
 }
 
+void printStringInt (void* pKey, int keySize, void* pData, int dataSize)
+{
+	char aKey[keySize];
+	memcpy(&aKey, pKey, keySize);
+
+	int data;
+	memcpy(&data, pData, dataSize);
+
+	printf ("Key: %s | Data: %d |\n", aKey, data);
+
+	return;
+}
+
 int main()
 {
-	const int HashTableSize = 10;
+	//Constant ints
+	const int HASH_TABLE_SIZE = 10;
+	const int STRING_KEY_SIZE = 7;
+	const int NUM_ELEMENTS = 10;
 
-	char key[] = "TestKey";
-	int data = 25;
+	//Variables for keys
+	char* keys[] = {"MyKey1", "MyKey2", "MyKey3",
+			"MyKey4", "MyKey5", "MyKey6", "MyKey7", "MyKey8", "MyKey9", "AKey10"};
+
+	//Variables for data
+	int data[] = {25, 92, 57, 110, 297, 12, 3, 98, 8, 879};
+	int i;
 
 	HashTable sTheHashTable;
 
+	//************************* Test htCreate *************************
 	htLoadErrorMessages ();
-	htCreate (&sTheHashTable, HashTableSize);
+	htCreate (&sTheHashTable, HASH_TABLE_SIZE);
 	assert (htIsEmpty (&sTheHashTable), "ht is empty after creation",
 																			"ht is NOT empty after creation");
 
-	htInsert (&sTheHashTable, &key, sizeof (key), &data, sizeof (data),
-						stringHash);
+	for (i = 0; i < NUM_ELEMENTS; ++i)
+	{
+		htInsert (&sTheHashTable, keys[i], STRING_KEY_SIZE, &data[i],
+							sizeof (data[i]), stringHash);
+	}
 
+	htPrint (&sTheHashTable, printStringInt, STRING_KEY_SIZE , sizeof (int));
 
-	printf ("Build Success");
 	return EXIT_SUCCESS;
 }

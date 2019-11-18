@@ -56,6 +56,8 @@ typedef struct HashTable
 } HashTable;
 
 typedef int (*hashFunction)(void* pKey, int keySize);
+typedef void (*printFunction)(void* pKey, int keySize, void* pData,
+															int dataSize);
 
 //*************************************************************************
 // Function prototypes
@@ -77,6 +79,7 @@ extern bool htUpdate ();
 
 extern bool htFind ();
 
-extern void htPrint();
+extern void htPrint(HashTablePtr psHashTable, printFunction printFunc,
+										int keySize, int dataSize);
 
 #endif /* HT_H_ */
