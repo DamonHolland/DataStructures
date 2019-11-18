@@ -1,10 +1,10 @@
 /**************************************************************************
 File name:  htdriver.c
-Author:     holl9358
+Author:     Damon Holland
 Date:       Nov 17, 2019
 Class:      CS300
-Assignment: 
-Purpose:    
+Assignment: Hash Table
+Purpose:    Test the functionality of the hash table ADT
 **************************************************************************/
 
 #include "stdlib.h"
