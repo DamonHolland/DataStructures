@@ -62,14 +62,22 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 
 int stringHash (void* pKey, int keySize)
 {
-	char aKey[keySize];
-	memcpy(&aKey, pKey, keySize);
+	//From ZyBooks: Daniel J. Bernstein created a popular version of a
+	//multiplicative string hash function that uses an initial value of 5381
+	//and a multiplier of 33. Bernstein's hash function performs well for
+	//hashing short English strings. (Why I use these constants)
+	const int HASH_INITIAL = 5381, HASH_MULTIPLIER = 33;
 
-	int hash = 0, i;
+	char aKey[keySize];
+
+	int i;
+	int hash = HASH_INITIAL;
+
+	memcpy(&aKey, pKey, keySize);
 
 	for (i = 0; i < keySize; ++i)
 	{
-		hash += aKey[i];
+		hash = (hash * HASH_MULTIPLIER) + aKey[i];
 	}
 
 	return hash;
@@ -78,12 +86,12 @@ int stringHash (void* pKey, int keySize)
 void printStringInt (void* pKey, int keySize, void* pData, int dataSize)
 {
 	char aKey[keySize];
-	memcpy(&aKey, pKey, keySize);
-
 	int data;
+
+	memcpy(&aKey, pKey, keySize);
 	memcpy(&data, pData, dataSize);
 
-	printf ("Key: %s | Data: %d |\n", aKey, data);
+	printf ("Key: %10s | Data: %10d |\n", aKey, data);
 
 	return;
 }
@@ -91,18 +99,22 @@ void printStringInt (void* pKey, int keySize, void* pData, int dataSize)
 int main()
 {
 	//Constant ints
+	const int NUM_ELEMENTS = 10;
 	const int HASH_TABLE_SIZE = 10;
 	const int STRING_KEY_SIZE = 7;
-	const int NUM_ELEMENTS = 10;
+	//Change previous 2 constants based on keys and data given below
 
 	//Variables for keys
-	char* keys[] = {"MyKey1", "MyKey2", "MyKey3",
-			"MyKey4", "MyKey5", "MyKey6", "MyKey7", "MyKey8", "MyKey9", "AKey10"};
+	char* keys[] = {"MyKey1", "MyKey2", "MyKey3", "MyKey4", "MyKey5",
+									"MyKey6", "MyKey7", "MyKey8", "MyKey9", "AKey10"};
 
 	//Variables for data
 	int data[] = {25, 92, 57, 110, 297, 12, 3, 98, 8, 879};
+
+	//iterator
 	int i;
 
+	//The Hash Table
 	HashTable sTheHashTable;
 
 	//************************* Test htCreate *************************
@@ -111,15 +123,22 @@ int main()
 	assert (htIsEmpty (&sTheHashTable), "ht is empty after creation",
 																			"ht is NOT empty after creation");
 
+	//************************* Test htInsert *************************
 	for (i = 0; i < NUM_ELEMENTS; ++i)
 	{
 		htInsert (&sTheHashTable, keys[i], STRING_KEY_SIZE, &data[i],
 							sizeof (data[i]), stringHash);
 	}
+	assert (!htIsEmpty (&sTheHashTable), "ht is not empty after insertion",
+																			 "ht IS empty after insertion");
 
+	//************************* Test htPrint *************************
 	htPrint (&sTheHashTable, printStringInt, STRING_KEY_SIZE , sizeof (int));
 
+	//************************* Test htTerminate *************************
 	htTerminate (&sTheHashTable);
+	assert (htIsEmpty (&sTheHashTable), "ht is empty after termination",
+																			"ht is NOT empty after termination");
 
 	return EXIT_SUCCESS;
 }

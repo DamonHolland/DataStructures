@@ -17,6 +17,24 @@ Purpose:
 
 char gszHTErrors[HT_NUMBER_OF_ERRORS][HT_MAX_ERROR_CHARS];
 
+/*************************************************************************
+ Function: 	 	processError
+
+ Description: Process the error code passed to this routine
+
+ Parameters:	pszFunctionName - string containing the name of the function
+  															causing the error
+ 	 	 	 	 	 	 	errorCode - an integer that identifies the queue error
+
+ Returned:	 	None
+ ************************************************************************/
+static void processError (const char *pszFunctionName, int errorCode)
+{
+	printf ("Function: %s %s \n ", pszFunctionName,
+					gszHTErrors[errorCode]);
+	exit (EXIT_FAILURE);
+}
+
 void htLoadErrorMessages ()
 {
 	lstLoadErrorMessages();
