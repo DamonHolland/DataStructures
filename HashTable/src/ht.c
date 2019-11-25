@@ -44,7 +44,7 @@ void htLoadErrorMessages ()
 
 void htCreate (HashTablePtr psHashTable, int bucketSize, int keySize,
 							 int dataSize, hashFunction pHashFunc,
-							 printFunction pPrintFunc)
+							 cmpFunction pCmpFunc, printFunction pPrintFunc)
 {
 	//Error Checking
 	if (NULL == psHashTable)
@@ -64,6 +64,7 @@ void htCreate (HashTablePtr psHashTable, int bucketSize, int keySize,
 	psHashTable->keySize = keySize;
 	psHashTable->dataSize = dataSize;
 	psHashTable->pHashFunction = pHashFunc;
+	psHashTable->pCmpFunction = pCmpFunc;
 	psHashTable->pPrintFunction = pPrintFunc;
 
 	return;
@@ -102,18 +103,47 @@ bool htIsEmpty (HashTablePtr psHashTable)
 
 bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData)
 {
+	int i;
+	bool bAdded = true;
+	HashTableElement newElement, tmpElement;
+
+	//Get The hash for the key being inserted
 	int hash = psHashTable->pHashFunction (pKey, psHashTable->keySize) %
 						 psHashTable->bucketSize;
 
-	HashTableElement newElement;
+	//Check if the key is already in the Hash Table
+	if (!lstIsEmpty (&psHashTable->bucket[hash]))
+	{
+		lstFirst (&psHashTable->bucket[hash]);
+		for (i = 0; i < lstSize (&psHashTable->bucket[hash]) && bAdded; ++i)
+		{
+			lstPeek (&psHashTable->bucket[hash], &tmpElement,
+							 sizeof (HashTableElement));
+			if (psHashTable->pCmpFunction (pKey, &tmpElement.pKey,
+					psHashTable->keySize) == 0)
+			{
+				bAdded = false;
+			}
+			lstNext (&psHashTable->bucket[hash]);
+		}
+	}
 
-	memcpy(&newElement.pKey, pKey, psHashTable->keySize);
-	memcpy(&newElement.pData, pData, psHashTable->dataSize);
+	//Add the new element if the key was not already in the Hash Table
+	if (bAdded)
+	{
+		memcpy(&newElement.pKey, pKey, psHashTable->keySize);
+		memcpy(&newElement.pData, pData, psHashTable->dataSize);
 
-	lstInsertAfter (&psHashTable->bucket[hash], &newElement,
-									sizeof (newElement));
+		if (!lstIsEmpty (&psHashTable->bucket[hash]))
+		{
+			lstLast (&psHashTable->bucket[hash]);
+		}
 
-	return false;
+		lstInsertAfter (&psHashTable->bucket[hash], &newElement,
+										sizeof (newElement));
+	}
+
+	return bAdded;
 }
 
 bool htDelete ()

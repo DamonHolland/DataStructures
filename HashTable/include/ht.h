@@ -41,6 +41,7 @@ strcpy (gszHTErrors[HT_NO_BUFFER_ERROR], "Error: No Buffer.");
 // User-defined types
 //*************************************************************************
 typedef int (*hashFunction)(void* pKey, int keySize);
+typedef int (*cmpFunction)(void* pKey1, void* pKey2, int keySize);
 typedef void (*printFunction)(void* pKey, int keySize, void* pData,
 															int dataSize);
 
@@ -62,6 +63,7 @@ typedef struct HashTable
 	int dataSize;
 
 	hashFunction pHashFunction;
+	cmpFunction pCmpFunction;
 	printFunction pPrintFunction;
 
 } HashTable;
@@ -73,7 +75,7 @@ extern void htLoadErrorMessages ();
 
 extern void htCreate (HashTablePtr psHashTable, int bucketSize, int keySize,
 		 	 	 	 	 	 	 	 	 	int dataSize, hashFunction pHashFunc,
-											printFunction pPrintFunc);
+											cmpFunction pCmpFunc, printFunction pPrintFunc);
 
 extern void htTerminate (HashTablePtr psHashTable);
 

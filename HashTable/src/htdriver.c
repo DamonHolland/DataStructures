@@ -83,6 +83,16 @@ int stringHash (void* pKey, int keySize)
 	return hash;
 }
 
+int stringCmp (void* pKey1, void* pKey2, int keySize)
+{
+	char aKey1[keySize], aKey2[keySize];
+
+	memcpy(&aKey1, pKey1, keySize);
+	memcpy(&aKey2, pKey2, keySize);
+
+	return strcmp (aKey1, aKey2);
+}
+
 void printStringInt (void* pKey, int keySize, void* pData, int dataSize)
 {
 	char aKey[keySize];
@@ -108,8 +118,11 @@ int main()
 	char* keys[] = {"MyKey1", "MyKey2", "MyKey3", "MyKey4", "MyKey5",
 									"MyKey6", "MyKey7", "MyKey8", "MyKey9", "AKey10"};
 
+	char* aDupKey = "MyKey1";
+
 	//Variables for data
 	int data[] = {25, 92, 57, 110, 297, 12, 3, 98, 8, 879};
+	int dupData = 5;
 
 	//iterator
 	int i;
@@ -120,7 +133,7 @@ int main()
 	//************************* Test htCreate *************************
 	htLoadErrorMessages ();
 	htCreate (&sTheHashTable, HASH_TABLE_SIZE, STRING_KEY_SIZE, sizeof (int),
-						stringHash, printStringInt);
+						stringHash, stringCmp, printStringInt);
 	assert (htIsEmpty (&sTheHashTable), "ht is empty after creation",
 																			"ht is NOT empty after creation");
 
@@ -130,7 +143,10 @@ int main()
 		htInsert (&sTheHashTable, keys[i], &data[i]);
 	}
 	assert (!htIsEmpty (&sTheHashTable), "ht is not empty after insertion",
-																			 "ht IS empty after insertion");
+																				 "ht IS empty after insertion");
+	assert (!htInsert (&sTheHashTable, aDupKey, &dupData),
+					"ht did NOT add duplicate key",
+					"ht added duplicate key");
 
 	//************************* Test htPrint *************************
 	htPrint (&sTheHashTable);
