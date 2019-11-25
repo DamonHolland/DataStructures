@@ -123,6 +123,7 @@ int main()
 	//Variables for data
 	int data[] = {25, 92, 57, 110, 297, 12, 3, 98, 8, 879};
 	int dupData = 5;
+	int dataBuffer;
 
 	//iterator
 	int i;
@@ -145,10 +146,19 @@ int main()
 	assert (!htIsEmpty (&sTheHashTable), "ht is not empty after insertion",
 																				 "ht IS empty after insertion");
 	assert (!htInsert (&sTheHashTable, aDupKey, &dupData),
-					"ht did NOT add duplicate key",
+					"ht did not add duplicate key",
 					"ht added duplicate key");
 
 	//************************* Test htPrint *************************
+	//Check Visually
+	htPrint (&sTheHashTable);
+
+	//************************* Test htFind *************************
+	htFind (&sTheHashTable, "AKey10", &dataBuffer);
+	printf ("Found Data: %d\n\n", dataBuffer);
+
+	//************************* Test htDelete *************************
+	htDelete (&sTheHashTable, "MyKey1");
 	htPrint (&sTheHashTable);
 
 	//************************* Test htTerminate *************************

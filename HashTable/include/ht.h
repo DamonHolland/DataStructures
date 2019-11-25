@@ -83,11 +83,11 @@ extern bool htIsEmpty (HashTablePtr psHashTable);
 
 extern bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData);
 
-extern bool htDelete ();
+extern bool htDelete (HashTablePtr psHashTable, void* pKey);
 
 extern bool htUpdate ();
 
-extern bool htFind ();
+extern bool htFind (HashTablePtr psHashTable, void* pKey, void* pBuffer);
 
 extern void htPrint(HashTablePtr psHashTable);
 

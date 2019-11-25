@@ -105,7 +105,7 @@ bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData)
 {
 	int i;
 	bool bAdded = true;
-	HashTableElement newElement, tmpElement;
+	HashTableElement tmpElement;
 
 	//Get The hash for the key being inserted
 	int hash = psHashTable->pHashFunction (pKey, psHashTable->keySize) %
@@ -131,24 +131,53 @@ bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData)
 	//Add the new element if the key was not already in the Hash Table
 	if (bAdded)
 	{
-		memcpy(&newElement.pKey, pKey, psHashTable->keySize);
-		memcpy(&newElement.pData, pData, psHashTable->dataSize);
+		memcpy(&tmpElement.pKey, pKey, psHashTable->keySize);
+		memcpy(&tmpElement.pData, pData, psHashTable->dataSize);
 
 		if (!lstIsEmpty (&psHashTable->bucket[hash]))
 		{
 			lstLast (&psHashTable->bucket[hash]);
 		}
 
-		lstInsertAfter (&psHashTable->bucket[hash], &newElement,
-										sizeof (newElement));
+		lstInsertAfter (&psHashTable->bucket[hash], &tmpElement,
+										sizeof (HashTableElement));
 	}
 
 	return bAdded;
 }
 
-bool htDelete ()
+bool htDelete (HashTablePtr psHashTable, void* pKey)
 {
-	return false;
+	int i;
+	bool bDeleted = false;
+	HashTableElement tmpElement;
+	int hash = psHashTable->pHashFunction(pKey, psHashTable->keySize) %
+						 psHashTable->bucketSize;
+
+	//Check if the key is already in the Hash Table
+	if (!lstIsEmpty (&psHashTable->bucket[hash]))
+	{
+		lstFirst (&psHashTable->bucket[hash]);
+		for (i = 0; i < lstSize (&psHashTable->bucket[hash]) && !bDeleted; ++i)
+		{
+			lstPeek (&psHashTable->bucket[hash], &tmpElement,
+								sizeof (HashTableElement));
+			if (psHashTable->pCmpFunction (pKey, &tmpElement.pKey,
+					psHashTable->keySize) == 0)
+			{
+				lstDeleteCurrent (&psHashTable->bucket[hash], &tmpElement,
+												  sizeof (HashTableElement));
+				bDeleted = true;
+			}
+			if (!lstIsEmpty (&psHashTable->bucket[hash]))
+			{
+				lstNext (&psHashTable->bucket[hash]);
+			}
+		}
+	}
+
+
+	return bDeleted;
 }
 
 bool htUpdate ()
@@ -156,8 +185,33 @@ bool htUpdate ()
 	return false;
 }
 
-bool htFind ()
+bool htFind (HashTablePtr psHashTable, void* pKey, void* pBuffer)
 {
+	int i;
+	bool bFound = false;
+	HashTableElement tmpElement;
+	int hash = psHashTable->pHashFunction(pKey, psHashTable->keySize) %
+						 psHashTable->bucketSize;
+
+
+	//Check if the key is already in the Hash Table
+		if (!lstIsEmpty (&psHashTable->bucket[hash]))
+		{
+			lstFirst (&psHashTable->bucket[hash]);
+			for (i = 0; i < lstSize (&psHashTable->bucket[hash]) && !bFound; ++i)
+			{
+				lstPeek (&psHashTable->bucket[hash], &tmpElement,
+								 sizeof (HashTableElement));
+				if (psHashTable->pCmpFunction (pKey, &tmpElement.pKey,
+						psHashTable->keySize) == 0)
+				{
+					memcpy (pBuffer, &tmpElement.pData, psHashTable->dataSize);
+					bFound = true;
+				}
+				lstNext (&psHashTable->bucket[hash]);
+			}
+		}
+
 	return false;
 }
 
@@ -181,7 +235,7 @@ void htPrint(HashTablePtr psHashTable)
 																		 &currentElement.pData,
 																		 psHashTable->dataSize);
 				lstNext (&psHashTable->bucket[i]);
-		}
+			}
 		}
 	}
 
