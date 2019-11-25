@@ -157,6 +157,9 @@ int main()
 	htFind (&sTheHashTable, "AKey10", &dataBuffer);
 	printf ("Found Data: %d\n\n", dataBuffer);
 
+	//************************* Test htUpdate *************************
+	htUpdate (&sTheHashTable, "MyKey2", &dupData);
+
 	//************************* Test htDelete *************************
 	htDelete (&sTheHashTable, "MyKey1");
 	htPrint (&sTheHashTable);

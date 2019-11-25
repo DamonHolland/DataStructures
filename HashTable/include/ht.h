@@ -73,8 +73,8 @@ typedef struct HashTable
 //*************************************************************************
 extern void htLoadErrorMessages ();
 
-extern void htCreate (HashTablePtr psHashTable, int bucketSize, int keySize,
-		 	 	 	 	 	 	 	 	 	int dataSize, hashFunction pHashFunc,
+extern void htCreate (HashTablePtr psHashTable, int bucketSize,
+											int keySize, int dataSize, hashFunction pHashFunc,
 											cmpFunction pCmpFunc, printFunction pPrintFunc);
 
 extern void htTerminate (HashTablePtr psHashTable);
@@ -85,7 +85,7 @@ extern bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData);
 
 extern bool htDelete (HashTablePtr psHashTable, void* pKey);
 
-extern bool htUpdate ();
+extern bool htUpdate (HashTablePtr psHashTable, void* pKey, void* pData);
 
 extern bool htFind (HashTablePtr psHashTable, void* pKey, void* pBuffer);
 
