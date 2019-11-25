@@ -21,8 +21,6 @@ Purpose:    Interface for a hash table
 #define HT_MAX_ERROR_CHARS 64
 #define MAX_BUCKET_SIZE 128
 enum {HT_NO_ERROR = 0,
-			HT_NO_CREATE_ERROR,
-			HT_NO_TERMINATE_ERROR,
 			HT_NO_MEMORY_ERROR,
 			HT_NO_BUFFER_ERROR}; // If this error name changes, change stmt below
 #define HT_NUMBER_OF_ERRORS HT_NO_BUFFER_ERROR - HT_NO_ERROR + 1

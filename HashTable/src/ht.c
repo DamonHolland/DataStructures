@@ -49,7 +49,7 @@ void htCreate (HashTablePtr psHashTable, int bucketSize, int keySize,
 	//Error Checking
 	if (NULL == psHashTable)
 	{
-		processError ("trCreate", HT_NO_MEMORY_ERROR);
+		processError ("htCreate", HT_NO_MEMORY_ERROR);
 	}
 
 	int i;
@@ -72,6 +72,12 @@ void htCreate (HashTablePtr psHashTable, int bucketSize, int keySize,
 
 void htTerminate (HashTablePtr psHashTable)
 {
+	//Error Checking
+	if (NULL == psHashTable)
+	{
+		processError ("htTerminate", HT_NO_MEMORY_ERROR);
+	}
+
 	int i;
 
 	for (i = 0; i < psHashTable->bucketSize; ++i)
@@ -86,6 +92,11 @@ void htTerminate (HashTablePtr psHashTable)
 
 bool htIsEmpty (HashTablePtr psHashTable)
 {
+	//Error Checking
+	if (NULL == psHashTable)
+	{
+		processError ("htIsEmpty", HT_NO_MEMORY_ERROR);
+	}
 
 	bool bIsEmpty = true;
 	int i;
@@ -103,6 +114,12 @@ bool htIsEmpty (HashTablePtr psHashTable)
 
 bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData)
 {
+	//Error Checking
+	if (NULL == psHashTable || NULL == pKey || NULL == pData)
+	{
+		processError ("htInsert", HT_NO_MEMORY_ERROR);
+	}
+
 	int i;
 	bool bAdded = true;
 	HashTableElement tmpElement;
@@ -148,6 +165,12 @@ bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData)
 
 bool htDelete (HashTablePtr psHashTable, void* pKey)
 {
+	//Error Checking
+	if (NULL == psHashTable || NULL == pKey)
+	{
+		processError ("htDelete", HT_NO_MEMORY_ERROR);
+	}
+
 	int i;
 	bool bDeleted = false;
 	HashTableElement tmpElement;
@@ -182,6 +205,12 @@ bool htDelete (HashTablePtr psHashTable, void* pKey)
 
 bool htUpdate (HashTablePtr psHashTable, void* pKey, void* pData)
 {
+	//Error Checking
+	if (NULL == psHashTable || NULL == pKey || NULL == pData)
+	{
+		processError ("htUpdate", HT_NO_MEMORY_ERROR);
+	}
+
 	int i;
 	bool bUpdated = false;
 	HashTableElement tmpElement;
@@ -214,6 +243,16 @@ bool htUpdate (HashTablePtr psHashTable, void* pKey, void* pData)
 
 bool htFind (HashTablePtr psHashTable, void* pKey, void* pBuffer)
 {
+	//Error Checking
+	if (NULL == psHashTable || NULL == pKey)
+	{
+		processError ("htFind", HT_NO_MEMORY_ERROR);
+	}
+	if (NULL == pBuffer)
+	{
+		processError ("htFind", HT_NO_BUFFER_ERROR);
+	}
+
 	int i;
 	bool bFound = false;
 	HashTableElement tmpElement;
@@ -244,6 +283,12 @@ bool htFind (HashTablePtr psHashTable, void* pKey, void* pBuffer)
 
 void htPrint(HashTablePtr psHashTable)
 {
+	//Error Checking
+	if (NULL == psHashTable)
+	{
+		processError ("htPrint", HT_NO_MEMORY_ERROR);
+	}
+
 	HashTableElement currentElement;
 	int i, j;
 
