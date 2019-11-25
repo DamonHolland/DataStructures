@@ -29,8 +29,6 @@ enum {HT_NO_ERROR = 0,
 // Error Messages
 //*************************************************************************
 #define LOAD_ERRORS strcpy (gszHTErrors[HT_NO_ERROR], "No Error.");\
-strcpy (gszHTErrors[HT_NO_CREATE_ERROR], "Error: No HT Create.");\
-strcpy (gszHTErrors[HT_NO_TERMINATE_ERROR], "Error: No HT Terminate.");\
 strcpy (gszHTErrors[HT_NO_MEMORY_ERROR], "Error: No HT Memory.");\
 strcpy (gszHTErrors[HT_NO_BUFFER_ERROR], "Error: No Buffer.");
 
