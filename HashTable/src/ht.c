@@ -42,8 +42,16 @@ void htLoadErrorMessages ()
 	return;
 }
 
-void htCreate (HashTablePtr psHashTable, int bucketSize)
+void htCreate (HashTablePtr psHashTable, int bucketSize, int keySize,
+							 int dataSize, hashFunction pHashFunc,
+							 printFunction pPrintFunc)
 {
+	//Error Checking
+	if (NULL == psHashTable)
+	{
+		processError ("trCreate", HT_NO_MEMORY_ERROR);
+	}
+
 	int i;
 
 	psHashTable->bucketSize = bucketSize;
@@ -52,6 +60,11 @@ void htCreate (HashTablePtr psHashTable, int bucketSize)
 	{
 		lstCreate (&psHashTable->bucket[i]);
 	}
+
+	psHashTable->keySize = keySize;
+	psHashTable->dataSize = dataSize;
+	psHashTable->pHashFunction = pHashFunc;
+	psHashTable->pPrintFunction = pPrintFunc;
 
 	return;
 }
@@ -87,15 +100,15 @@ bool htIsEmpty (HashTablePtr psHashTable)
 	return bIsEmpty;
 }
 
-bool htInsert (HashTablePtr psHashTable, void* pKey, int keySize,
-							 void* pData, int dataSize, hashFunction hashFunc)
+bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData)
 {
-	int hash = hashFunc (pKey, keySize) % psHashTable->bucketSize;
+	int hash = psHashTable->pHashFunction (pKey, psHashTable->keySize) %
+						 psHashTable->bucketSize;
 
 	HashTableElement newElement;
 
-	memcpy(&newElement.pKey, pKey, keySize);
-	memcpy(&newElement.pData, pData, dataSize);
+	memcpy(&newElement.pKey, pKey, psHashTable->keySize);
+	memcpy(&newElement.pData, pData, psHashTable->dataSize);
 
 	lstInsertAfter (&psHashTable->bucket[hash], &newElement,
 									sizeof (newElement));
@@ -118,8 +131,7 @@ bool htFind ()
 	return false;
 }
 
-void htPrint(HashTablePtr psHashTable, printFunction printFunc, int keySize,
-						 int dataSize)
+void htPrint(HashTablePtr psHashTable)
 {
 	HashTableElement currentElement;
 	int i, j;
@@ -134,8 +146,10 @@ void htPrint(HashTablePtr psHashTable, printFunction printFunc, int keySize,
 				lstPeek (&psHashTable->bucket[i], &currentElement,
 						 	 	 sizeof (currentElement));
 				printf ("Bucket: %d | ", i);
-				printFunc (&currentElement.pKey, keySize, &currentElement.pData,
-								 	 dataSize);
+				psHashTable->pPrintFunction (&currentElement.pKey,
+																		 psHashTable->keySize,
+																		 &currentElement.pData,
+																		 psHashTable->dataSize);
 				lstNext (&psHashTable->bucket[i]);
 		}
 		}

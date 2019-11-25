@@ -40,6 +40,10 @@ strcpy (gszHTErrors[HT_NO_BUFFER_ERROR], "Error: No Buffer.");
 //*************************************************************************
 // User-defined types
 //*************************************************************************
+typedef int (*hashFunction)(void* pKey, int keySize);
+typedef void (*printFunction)(void* pKey, int keySize, void* pData,
+															int dataSize);
+
 typedef struct HashTableElement* HashTableElementPtr;
 typedef struct HashTableElement
 {
@@ -53,25 +57,29 @@ typedef struct HashTable
 {
 	int bucketSize;
 	List bucket[MAX_BUCKET_SIZE];
-} HashTable;
 
-typedef int (*hashFunction)(void* pKey, int keySize);
-typedef void (*printFunction)(void* pKey, int keySize, void* pData,
-															int dataSize);
+	int keySize;
+	int dataSize;
+
+	hashFunction pHashFunction;
+	printFunction pPrintFunction;
+
+} HashTable;
 
 //*************************************************************************
 // Function prototypes
 //*************************************************************************
 extern void htLoadErrorMessages ();
 
-extern void htCreate (HashTablePtr psHashTable, int bucketSize);
+extern void htCreate (HashTablePtr psHashTable, int bucketSize, int keySize,
+		 	 	 	 	 	 	 	 	 	int dataSize, hashFunction pHashFunc,
+											printFunction pPrintFunc);
 
 extern void htTerminate (HashTablePtr psHashTable);
 
 extern bool htIsEmpty (HashTablePtr psHashTable);
 
-extern bool htInsert (HashTablePtr psHashTable, void* pKey, int keySize,
-											void* pData, int dataSize, hashFunction hashFunc);
+extern bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData);
 
 extern bool htDelete ();
 
@@ -79,7 +87,6 @@ extern bool htUpdate ();
 
 extern bool htFind ();
 
-extern void htPrint(HashTablePtr psHashTable, printFunction printFunc,
-										int keySize, int dataSize);
+extern void htPrint(HashTablePtr psHashTable);
 
 #endif /* HT_H_ */

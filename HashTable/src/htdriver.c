@@ -119,21 +119,21 @@ int main()
 
 	//************************* Test htCreate *************************
 	htLoadErrorMessages ();
-	htCreate (&sTheHashTable, HASH_TABLE_SIZE);
+	htCreate (&sTheHashTable, HASH_TABLE_SIZE, STRING_KEY_SIZE, sizeof (int),
+						stringHash, printStringInt);
 	assert (htIsEmpty (&sTheHashTable), "ht is empty after creation",
 																			"ht is NOT empty after creation");
 
 	//************************* Test htInsert *************************
 	for (i = 0; i < NUM_ELEMENTS; ++i)
 	{
-		htInsert (&sTheHashTable, keys[i], STRING_KEY_SIZE, &data[i],
-							sizeof (data[i]), stringHash);
+		htInsert (&sTheHashTable, keys[i], &data[i]);
 	}
 	assert (!htIsEmpty (&sTheHashTable), "ht is not empty after insertion",
 																			 "ht IS empty after insertion");
 
 	//************************* Test htPrint *************************
-	htPrint (&sTheHashTable, printStringInt, STRING_KEY_SIZE , sizeof (int));
+	htPrint (&sTheHashTable);
 
 	//************************* Test htTerminate *************************
 	htTerminate (&sTheHashTable);
