@@ -243,8 +243,8 @@ int main()
 	const int NUM_ELEMENTS = 10;
 	const int TEST_INDEX = 5;
 	const int UPDATE_VALUE = 1000;
-	const char* FILE_NAME = "testOutput/printTest1.txt";
-	const char* NOT_INSERTED_KEY = "NOT_IN";
+	const char* pFILE_NAME = "testOutput/printTest1.txt";
+	const char* pNOT_INSERTED_KEY = "NOT_IN";
 	const int HASH_TABLE_SIZE = 10;
 	const int STRING_KEY_SIZE = 8;
 	//Change previous 2 constants based on arrays given below
@@ -267,9 +267,15 @@ int main()
 	int i;
 
 	//Output File
-	FILE* outFile;
+	FILE* pOutFile;
 
-	outFile = fopen(FILE_NAME, "w");
+	//********** Open and validate file **********
+	pOutFile = fopen (pFILE_NAME, "w");
+	if (!pOutFile)
+	{
+		printf ("Error: Unable to open file\n");
+		exit (EXIT_FAILURE);
+	}
 
 	//The Hash Table
 	HashTable sStringIntHashTable;
@@ -307,7 +313,7 @@ int main()
 					!strcmp (aStringBuffer, apStrings[TEST_INDEX]),
 					"Found correct data for given keys",
 					"Found INCORRECT data for given keys");
-	assert (!htFind (&sStringIntHashTable, NOT_INSERTED_KEY, &intBuffer),
+	assert (!htFind (&sStringIntHashTable, pNOT_INSERTED_KEY, &intBuffer),
 					"Find returns false when key not in table",
 					"Find does NOT return false when key not in table");
 
@@ -317,7 +323,8 @@ int main()
 	assert (UPDATE_VALUE == intBuffer,
 					"Data updated correctly",
 					"Data NOT updated correctly");
-	assert (!htUpdate (&sStringIntHashTable, NOT_INSERTED_KEY, &UPDATE_VALUE),
+	assert (!htUpdate (&sStringIntHashTable, pNOT_INSERTED_KEY,
+					&UPDATE_VALUE),
 					"Update returns false when key not in table",
 					"Update does NOT return false when key not in table");
 
@@ -329,13 +336,13 @@ int main()
 	assert (htIsEmpty (&sStringIntHashTable),
 					"ht is empty after deleting all elements",
 				  "ht is NOT empty after deleting all elements");
-	assert (!htDelete (&sStringIntHashTable, NOT_INSERTED_KEY),
+	assert (!htDelete (&sStringIntHashTable, pNOT_INSERTED_KEY),
 					"Delete returns false when key not in table",
 					"Delete did NOT return false when key not in table");
 
 	//************************* Test htPrint *************************
 	//Check Visually
-	htPrint (&sIntStringHashTable, outFile);
+	htPrint (&sIntStringHashTable, pOutFile);
 
 	//************************* Test htTerminate *************************
 	htTerminate (&sStringIntHashTable);
@@ -345,6 +352,6 @@ int main()
 					"ht is empty after termination",
 					"ht is NOT empty after termination");
 
-	fclose (outFile);
+	fclose (pOutFile);
 	return EXIT_SUCCESS;
 }
