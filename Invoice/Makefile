@@ -36,6 +36,10 @@ valgrind: bin/invoice
 	valgrind -v --leak-check=yes --track-origins=yes --leak-check=full \
  	--show-leak-kinds=all bin/invoice
  	
+ tarball: clean
+	tar czf ../cs300_6_holl9358.tar.gz ../Invoice ../HashTable \
+	../GenericDynamicList
+ 	
 clean:
 	rm -rf bin/*.o bin/invoice
 	cd ../HashTable; make clean
