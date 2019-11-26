@@ -31,6 +31,10 @@ bin/ht.o: src/ht.c include/ht.h ../GenericDynamicList/include/list.h
 ../GenericDynamicList/bin/list.o:
 	cd ../GenericDynamicList; make bin/list.o
  	
+valgrind: bin/htdriver
+	valgrind -v --leak-check=yes --track-origins=yes --leak-check=full \
+ 	--show-leak-kinds=all bin/htdriver
+ 	
 clean:
 	rm -rf bin/*.o bin/htdriver
 	cd ../GenericDynamicList; make clean
