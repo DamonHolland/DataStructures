@@ -73,7 +73,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 
  Returned:	 	uint32_t - The hash value
  ************************************************************************/
-uint32_t stringHash (const void* pKey, int keySize)
+int stringHash (const void* pKey, int keySize)
 {
 	//From ZyBooks: Daniel J. Bernstein created a popular version of a
 	//multiplicative string hash function that uses an initial value of 5381
@@ -84,7 +84,7 @@ uint32_t stringHash (const void* pKey, int keySize)
 	char aKey[keySize];
 
 	int i;
-	uint32_t hash = HASH_INITIAL;
+	int hash = HASH_INITIAL;
 
 	memcpy (&aKey, pKey, keySize);
 
@@ -108,7 +108,7 @@ uint32_t stringHash (const void* pKey, int keySize)
 
  Returned:	 	uint32_t - The hash value
  ************************************************************************/
-uint32_t intHash (const void* pKey, int keySize)
+int intHash (const void* pKey, int keySize)
 {
 	uint32_t hash;
 	int key;

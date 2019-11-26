@@ -20,7 +20,7 @@ Purpose:    Interface for a hash table
 // Constants
 //*************************************************************************
 #define HT_MAX_ERROR_CHARS 64
-#define MAX_BUCKET_SIZE 128
+#define MAX_BUCKET_SIZE 20
 enum {HT_NO_ERROR = 0,
 			HT_NO_MEMORY_ERROR,
 			HT_NO_BUFFER_ERROR}; // If this error name changes, change stmt below
@@ -37,7 +37,7 @@ strcpy (gszHTErrors[HT_NO_BUFFER_ERROR], "Error: No Buffer.");
 //*************************************************************************
 // User-defined types
 //*************************************************************************
-typedef uint32_t (*hashFunction)(const void* pKey, int keySize);
+typedef int (*hashFunction)(const void* pKey, int keySize);
 typedef int (*cmpFunction)(const void* pKey1, const void* pKey2,
 													 int keySize);
 typedef void (*printFunction)(FILE* pOutStream, const void* pKey,

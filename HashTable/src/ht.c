@@ -3,8 +3,8 @@ File name:  ht.c
 Author:     holl9358
 Date:       Nov 17, 2019
 Class:      CS300
-Assignment: 
-Purpose:    
+Assignment: Hash Table
+Purpose:    Implement functions for the hash table
 **************************************************************************/
 
 #include <stdbool.h>
@@ -116,11 +116,24 @@ void htTerminate (HashTablePtr psHashTable)
 		processError ("htTerminate", HT_NO_MEMORY_ERROR);
 	}
 
-	int i;
+	HashTableElement tmpElement;
+	int i, j;
 
 	//Terminate all bucket lists in hash table
 	for (i = 0; i < psHashTable->bucketSize; ++i)
 	{
+		if (!lstIsEmpty (&psHashTable->bucket[i]))
+		{
+			lstFirst (&psHashTable->bucket[i]);
+			for (j = 0; j < lstSize (&psHashTable->bucket[i]); ++j)
+			{
+				lstPeek (&psHashTable->bucket[i], &tmpElement,
+								 sizeof (HashTableElement));
+				free (tmpElement.pKey);
+				free (tmpElement.pData);
+				lstNext (&psHashTable->bucket[i]);
+			}
+		}
 		lstTerminate (&psHashTable->bucket[i]);
 	}
 	psHashTable->bucketSize = 0;
@@ -199,7 +212,7 @@ bool htInsert (HashTablePtr psHashTable, const void* pKey,
 		{
 			lstPeek (&psHashTable->bucket[hash], &tmpElement,
 							 sizeof (HashTableElement));
-			if (psHashTable->pCmpFunction (pKey, &tmpElement.pKey,
+			if (psHashTable->pCmpFunction (pKey, tmpElement.pKey,
 					psHashTable->keySize) == 0)
 			{
 				bAdded = false;
@@ -211,8 +224,10 @@ bool htInsert (HashTablePtr psHashTable, const void* pKey,
 	//Add the new element if the key was not already in the Hash Table
 	if (bAdded)
 	{
-		memcpy (&tmpElement.pKey, pKey, psHashTable->keySize);
-		memcpy (&tmpElement.pData, pData, psHashTable->dataSize);
+		tmpElement.pKey = (void*)malloc (psHashTable->keySize);
+		tmpElement.pData = (void*)malloc (psHashTable->dataSize);
+		memcpy (tmpElement.pKey, pKey, psHashTable->keySize);
+		memcpy (tmpElement.pData, pData, psHashTable->dataSize);
 
 		if (!lstIsEmpty (&psHashTable->bucket[hash]))
 		{
@@ -231,6 +246,7 @@ bool htInsert (HashTablePtr psHashTable, const void* pKey,
 
  Description: Attempts to delete a key/data pair from the given hash table.
  	 	 	 	 	 	 	Will only delete key/data pair if the key is found.
+ 	 	 	 	 	 	 	Frees the memory of the deleted element
 
  Parameters:	psHashTable - Pointer to the hash table to delete from.
  	 	 	 	 	 	 	pKey        - Pointer to the key to delete.
@@ -260,9 +276,11 @@ bool htDelete (HashTablePtr psHashTable, const void* pKey)
 		{
 			lstPeek (&psHashTable->bucket[hash], &tmpElement,
 								sizeof (HashTableElement));
-			if (psHashTable->pCmpFunction (pKey, &tmpElement.pKey,
+			if (psHashTable->pCmpFunction (pKey, tmpElement.pKey,
 					psHashTable->keySize) == 0)
 			{
+				free (tmpElement.pKey);
+				free (tmpElement.pData);
 				lstDeleteCurrent (&psHashTable->bucket[hash], &tmpElement,
 												  sizeof (HashTableElement));
 				bDeleted = true;
@@ -317,10 +335,10 @@ bool htUpdate (HashTablePtr psHashTable, const void* pKey,
 		{
 			lstPeek (&psHashTable->bucket[hash], &tmpElement,
 							 sizeof (HashTableElement));
-			if (psHashTable->pCmpFunction (pKey, &tmpElement.pKey,
+			if (psHashTable->pCmpFunction (pKey, tmpElement.pKey,
 					psHashTable->keySize) == 0)
 			{
-				memcpy (&tmpElement.pData, pData, psHashTable->dataSize);
+				memcpy (tmpElement.pData, pData, psHashTable->dataSize);
 				lstUpdateCurrent (&psHashTable->bucket[hash], &tmpElement,
 													sizeof (HashTableElement));
 				bUpdated = true;
@@ -376,10 +394,10 @@ bool htFind (HashTablePtr psHashTable, const void* pKey,
 		{
 			lstPeek (&psHashTable->bucket[hash], &tmpElement,
 							 sizeof (HashTableElement));
-			if (psHashTable->pCmpFunction (pKey, &tmpElement.pKey,
+			if (psHashTable->pCmpFunction (pKey, tmpElement.pKey,
 					psHashTable->keySize) == 0)
 			{
-				memcpy (pBuffer, &tmpElement.pData, psHashTable->dataSize);
+				memcpy (pBuffer, tmpElement.pData, psHashTable->dataSize);
 				bFound = true;
 			}
 			lstNext (&psHashTable->bucket[hash]);
