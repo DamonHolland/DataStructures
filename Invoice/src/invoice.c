@@ -179,8 +179,8 @@ void printIntItem (FILE* pOutStream, const void* pKey, int keySize,
 	memcpy (&key, pKey, keySize);
 	memcpy (&sData, pData, dataSize);
 
-	fprintf (pOutStream, "Key: %10d | Manufacturer: %10s | Item: %10s |\n", key,
-						sData.manufacturer, sData.itemName);
+	fprintf (pOutStream, "%d %s, %s ", key, sData.itemName,
+					 sData.manufacturer);
 
 	return;
 }
@@ -216,6 +216,15 @@ int main()
 	Item sItem;
 	char aManufacturer[10];
 	char aItemName[10];
+
+	//Variables to store actions
+	int givenID;
+	int givenQuantity;
+	int givenCost;
+	char aGivenDenom[DENOM_LENGTH];
+
+	//Variables for calculations
+	double neededConversion;
 
 	//File used to read data
 	FILE* pInFile;
@@ -260,18 +269,45 @@ int main()
 		fscanf(pInFile, "%d %s %s ", &ID,  aItemName, aManufacturer);
 		strcpy (sItem.itemName, aItemName);
 		strcpy (sItem.manufacturer , aManufacturer);
-		printf ("%s %s\n", sItem.itemName, sItem.manufacturer);
-		int size = sizeof (sItem);
-		//htInsert (&sItemsTable, &ID, &sItem);
+		htInsert (&sItemsTable, &ID, &sItem);
 	}
 	fclose (pInFile);
 
-	htPrint (&sConversionsTable, stdout);
-	//htPrint (&sItemsTable, stdout);
+	//******************* Read actions and print results ********************
+	//Open and validate actions file
+	pInFile = fopen (pACTIONS_FILE, "r");
+	if(!pInFile)
+	{
+		printf ("Error: Unable to open file\n");
+		exit (EXIT_FAILURE);
+	}
+	//Open and validate invoice file
+	pOutFile = fopen (pINVOICE_FILE, "w");
+	if(!pOutFile)
+	{
+		printf ("Error: Unable to open file\n");
+		exit (EXIT_FAILURE);
+	}
 
+	//Print invoice corresponding to actions
+	while (!feof (pInFile))
+	{
+		fscanf (pInFile, "%d %d %d %s ", &givenID, &givenQuantity, &givenCost,
+					 aGivenDenom);
+		htPrint (&sItemsTable, &givenID, pOutFile);
+		htFind (&sConversionsTable, &aGivenDenom, &neededConversion);
+		fprintf (pOutFile, "%d %.2f %.2f", givenQuantity, neededConversion *
+						 givenCost, neededConversion * givenCost * givenQuantity );
+		if (!feof (pInFile))
+		{
+			fprintf (pOutFile, "\n");
+		}
+	}
 
+	fclose (pInFile);
+	fclose (pOutFile);
 	htTerminate (&sConversionsTable);
-	//htTerminate (&sItemsTable);
+	htTerminate (&sItemsTable);
 
 	return EXIT_SUCCESS;
 }

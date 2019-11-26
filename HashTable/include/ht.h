@@ -20,7 +20,7 @@ Purpose:    Interface for a hash table
 // Constants
 //*************************************************************************
 #define HT_MAX_ERROR_CHARS 64
-#define MAX_BUCKET_SIZE 20
+#define MAX_BUCKET_SIZE 128
 enum {HT_NO_ERROR = 0,
 			HT_NO_MEMORY_ERROR,
 			HT_NO_BUFFER_ERROR}; // If this error name changes, change stmt below
@@ -91,6 +91,6 @@ extern bool htUpdate (HashTablePtr psHashTable, const void* pKey,
 extern bool htFind (HashTablePtr psHashTable, const void* pKey,
 										void* pBuffer);
 
-extern void htPrint(HashTablePtr psHashTable, FILE* pOutStream);
+extern void htPrint(HashTablePtr psHashTable, void* pKey, FILE* pOutStream);
 
 #endif /* HT_H_ */

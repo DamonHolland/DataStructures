@@ -221,7 +221,7 @@ void printIntString (FILE* pOutStream, const void* pKey, int keySize,
 	char aData[keySize];
 
 	memcpy (&key, pKey, keySize);
-	memcpy (&aData, pData, dataSize);
+	memcpy (aData, pData, dataSize);
 
 	fprintf (pOutStream, "Key: %10d | Data: %10s |\n", key, aData);
 
@@ -342,7 +342,10 @@ int main()
 
 	//************************* Test htPrint *************************
 	//Check Visually
-	htPrint (&sIntStringHashTable, pOutFile);
+	for (i = 0; i < NUM_ELEMENTS; ++i)
+	{
+		htPrint (&sIntStringHashTable, &aInts[i], pOutFile);
+	}
 
 	//************************* Test htTerminate *************************
 	htTerminate (&sStringIntHashTable);
