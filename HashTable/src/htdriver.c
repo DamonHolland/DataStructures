@@ -10,6 +10,7 @@ Purpose:    Test the functionality of the hash table ADT
 #include "stdlib.h"
 #include "stdio.h"
 #include "../include/ht.h"
+#include <stdint.h>
 
 /*************************************************************************
  Function: 	 	success
@@ -60,7 +61,19 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
 	}
 }
 
-int stringHash (void* pKey, int keySize)
+/*************************************************************************
+ Function: 	 	stringHash
+
+ Description: Hashes a given string to an integer hash value - Uses the
+ 	 	 	 	 	 	 	multiplicative string hash
+
+ Parameters:	pKey     - The pointer to the string key to hash
+ 	 	 	 	 	 	 	keySize  - An integer that contains the size in bytes of the
+ 	 	 	 	 	 	 	 	 	 	 	 	 key
+
+ Returned:	 	uint32_t - The hash value
+ ************************************************************************/
+uint32_t stringHash (const void* pKey, int keySize)
 {
 	//From ZyBooks: Daniel J. Bernstein created a popular version of a
 	//multiplicative string hash function that uses an initial value of 5381
@@ -71,9 +84,9 @@ int stringHash (void* pKey, int keySize)
 	char aKey[keySize];
 
 	int i;
-	int hash = HASH_INITIAL;
+	uint32_t hash = HASH_INITIAL;
 
-	memcpy(&aKey, pKey, keySize);
+	memcpy (&aKey, pKey, keySize);
 
 	for (i = 0; i < keySize; ++i)
 	{
@@ -83,91 +96,255 @@ int stringHash (void* pKey, int keySize)
 	return hash;
 }
 
-int stringCmp (void* pKey1, void* pKey2, int keySize)
+/*************************************************************************
+ Function: 	 	intHash
+
+ Description: Hashes a given integer to an integer hash - Uses the
+  						mid square hash function
+
+ Parameters:	pKey     - The pointer to the integer key to hash
+ 	 	 	 	 	 	 	keySize  - An integer that contains the size in bytes of the
+ 	 	 	 	 	 	 	 	 	 	 	 	 key
+
+ Returned:	 	uint32_t - The hash value
+ ************************************************************************/
+uint32_t intHash (const void* pKey, int keySize)
+{
+	uint32_t hash;
+	int key;
+
+	memcpy (&key, pKey, keySize);
+
+	hash = key * key;
+	hash = (hash & 0x000ff000) >> 12;
+
+	return hash;
+}
+
+/*************************************************************************
+ Function: 	 	stringCmp
+
+ Description: Compares two string values
+
+ Parameters:	pKey1    - A pointer to the first string to compare.
+ 	 	 	 	 	 	 	pKey2    - A pointer to the second string to compare.
+ 	 	 	 	 	 	 	keySize  - An integer that contains the size in bytes of the
+ 	 	 	 	 	 	 	 	 	 	 	 	 key.
+
+ Returned:	 	int      - An integer that will equal 0 if the keys were
+  											 equal, or the difference between the first and
+  											 second key using strncmp.
+  											 (Signed Integer: Key1 - Key2)
+ ************************************************************************/
+int stringCmp (const void* pKey1, const void* pKey2, int keySize)
 {
 	char aKey1[keySize], aKey2[keySize];
 
-	memcpy(&aKey1, pKey1, keySize);
-	memcpy(&aKey2, pKey2, keySize);
+	memcpy (&aKey1, pKey1, keySize);
+	memcpy (&aKey2, pKey2, keySize);
 
 	return strcmp (aKey1, aKey2);
 }
 
-void printStringInt (void* pKey, int keySize, void* pData, int dataSize)
+/*************************************************************************
+ Function: 	 	intCmp
+
+ Description: Compares two integer values
+
+ Parameters:	pKey1    - A pointer to the first integer to compare.
+ 	 	 	 	 	 	 	pKey2    - A pointer to the second integer to compare.
+ 	 	 	 	 	 	 	keySize  - An integer that contains the size in bytes of the
+ 	 	 	 	 	 	 	 	 	 	 	 	 key.
+
+ Returned:	 	int      - An integer that will equal 0 if the keys were
+  											 equal, or the difference between the first and
+  											 second key. (Signed Integer: Key1 - Key2)
+ ************************************************************************/
+int intCmp (const void* pKey1, const void* pKey2, int keySize)
+{
+	int key1, key2;
+
+	memcpy (&key1, pKey1, keySize);
+	memcpy (&key2, pKey2, keySize);
+
+	return key1 - key2;
+}
+
+/*************************************************************************
+ Function: 	 	printStringInt
+
+ Description: Prints a String-Int Key/Data pair to the given output
+
+ Parameters:	pOutStream - The output stream to print to
+ 	 	 	 	 	 	 	pKey       - A pointer to the string key to print.
+ 	 	 	 	 	 	 	keySize    - An integer that contains the size in bytes of the
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 key.
+ 	 	 	 	 	 	 	pData      - A pointer to the integer data to print.
+ 	 	 	 	 	 	 	dataSize   - An integer that contains the size in bytes of the
+ 	 	 	 	 	 	 	 	 	 	 	 	   data.
+
+ Returned:	 	None
+ ************************************************************************/
+void printStringInt (FILE* pOutStream, const void* pKey, int keySize,
+										 const void* pData, int dataSize)
 {
 	char aKey[keySize];
 	int data;
 
-	memcpy(&aKey, pKey, keySize);
-	memcpy(&data, pData, dataSize);
+	memcpy (&aKey, pKey, keySize);
+	memcpy (&data, pData, dataSize);
 
-	printf ("Key: %10s | Data: %10d |\n", aKey, data);
+	fprintf (pOutStream, "Key: %10s | Data: %10d |\n", aKey, data);
 
 	return;
 }
 
+/*************************************************************************
+ Function: 	 	printIntString
+
+ Description: Prints a Int-String Key/Data pair to the given output
+
+ Parameters:	pOutStream - The output stream to print to
+ 	 	 	 	 	 	 	pKey       - A pointer to the integer key to print.
+ 	 	 	 	 	 	 	keySize    - An integer that contains the size in bytes of the
+ 	 	 	 	 	 	 	 	 	 	 	 	 	 key.
+ 	 	 	 	 	 	 	pData      - A pointer to the string data to print.
+ 	 	 	 	 	 	 	dataSize   - An integer that contains the size in bytes of the
+ 	 	 	 	 	 	 	 	 	 	 	 	   data.
+
+ Returned:	 	None
+ ************************************************************************/
+void printIntString (FILE* pOutStream, const void* pKey, int keySize,
+										 const void* pData, int dataSize)
+{
+	int key;
+	char aData[keySize];
+
+	memcpy (&key, pKey, keySize);
+	memcpy (&aData, pData, dataSize);
+
+	fprintf (pOutStream, "Key: %10d | Data: %10s |\n", key, aData);
+
+	return;
+}
+
+/*************************************************************************
+ Function: 	 	main
+
+ Description: Test all the functions of the hash table
+
+ Parameters:	none
+
+ Returned:	 	Exit Status
+ ************************************************************************/
 int main()
 {
-	//Constant ints
+	//Constants
 	const int NUM_ELEMENTS = 10;
+	const int TEST_INDEX = 5;
+	const int UPDATE_VALUE = 1000;
+	const char* FILE_NAME = "testOutput/printTest1.txt";
+	const char* NOT_INSERTED_KEY = "NOT_IN";
 	const int HASH_TABLE_SIZE = 10;
-	const int STRING_KEY_SIZE = 7;
-	//Change previous 2 constants based on keys and data given below
+	const int STRING_KEY_SIZE = 8;
+	//Change previous 2 constants based on arrays given below
 
-	//Variables for keys
-	char* keys[] = {"MyKey1", "MyKey2", "MyKey3", "MyKey4", "MyKey5",
-									"MyKey6", "MyKey7", "MyKey8", "MyKey9", "AKey10"};
+	//Variables for keys / data
+	char* apStrings[] = {"String1", "String2", "String3", "String4",
+											 "String5", "String6", "String7", "String8",
+											 "String9", "Strng10"};
+	int aInts[] = {25, 92, 57, 110, 297, 12, 3, 98, 8, 879};
 
-	char* aDupKey = "MyKey1";
-
-	//Variables for data
-	int data[] = {25, 92, 57, 110, 297, 12, 3, 98, 8, 879};
+	//Variables to test insertion of duplicates
+	char* pDupKey = "String1";
 	int dupData = 5;
-	int dataBuffer;
+
+	//Buffer Variables
+	int intBuffer;
+	char aStringBuffer[STRING_KEY_SIZE];
 
 	//iterator
 	int i;
 
+	//Output File
+	FILE* outFile;
+
+	outFile = fopen(FILE_NAME, "w");
+
 	//The Hash Table
-	HashTable sTheHashTable;
+	HashTable sStringIntHashTable;
+	HashTable sIntStringHashTable;
 
 	//************************* Test htCreate *************************
 	htLoadErrorMessages ();
-	htCreate (&sTheHashTable, HASH_TABLE_SIZE, STRING_KEY_SIZE, sizeof (int),
-						stringHash, stringCmp, printStringInt);
-	assert (htIsEmpty (&sTheHashTable), "ht is empty after creation",
-																			"ht is NOT empty after creation");
+	htCreate (&sStringIntHashTable, HASH_TABLE_SIZE, STRING_KEY_SIZE,
+						sizeof (int), stringHash, stringCmp, printStringInt);
+	htCreate (&sIntStringHashTable, HASH_TABLE_SIZE, sizeof (int),
+						STRING_KEY_SIZE, intHash, intCmp, printIntString);
+	assert (htIsEmpty (&sStringIntHashTable) &&
+					htIsEmpty (&sIntStringHashTable),
+					"Hash tables empty after creation",
+					"Hash tables are NOT empty after creation");
 
 	//************************* Test htInsert *************************
 	for (i = 0; i < NUM_ELEMENTS; ++i)
 	{
-		htInsert (&sTheHashTable, keys[i], &data[i]);
+		htInsert (&sStringIntHashTable, apStrings[i], &aInts[i]);
+		htInsert (&sIntStringHashTable, &aInts[i], apStrings[i]);
 	}
-	assert (!htIsEmpty (&sTheHashTable), "ht is not empty after insertion",
-																				 "ht IS empty after insertion");
-	assert (!htInsert (&sTheHashTable, aDupKey, &dupData),
-					"ht did not add duplicate key",
-					"ht added duplicate key");
+	assert (!htIsEmpty (&sStringIntHashTable) &&
+					!htIsEmpty (&sIntStringHashTable),
+					"Hash tables are not empty after insertion",
+					"Hash tables ARE empty after insertion");
+	assert (!htInsert (&sStringIntHashTable, pDupKey, &dupData),
+					"Insert did not add duplicate key",
+					"Insert added duplicate key");
+
+	//************************* Test htFind *************************
+	htFind (&sStringIntHashTable, apStrings[TEST_INDEX], &intBuffer);
+	htFind (&sIntStringHashTable, &aInts[TEST_INDEX], &aStringBuffer);
+	assert (aInts[TEST_INDEX] == intBuffer &&
+					!strcmp (aStringBuffer, apStrings[TEST_INDEX]),
+					"Found correct data for given keys",
+					"Found INCORRECT data for given keys");
+	assert (!htFind (&sStringIntHashTable, NOT_INSERTED_KEY, &intBuffer),
+					"Find returns false when key not in table",
+					"Find does NOT return false when key not in table");
+
+	//************************* Test htUpdate *************************
+	htUpdate (&sStringIntHashTable, apStrings[TEST_INDEX], &UPDATE_VALUE);
+	htFind (&sStringIntHashTable, apStrings[TEST_INDEX], &intBuffer);
+	assert (UPDATE_VALUE == intBuffer,
+					"Data updated correctly",
+					"Data NOT updated correctly");
+	assert (!htUpdate (&sStringIntHashTable, NOT_INSERTED_KEY, &UPDATE_VALUE),
+					"Update returns false when key not in table",
+					"Update does NOT return false when key not in table");
+
+	//************************* Test htDelete *************************
+	for (i = 0; i < NUM_ELEMENTS; ++i)
+	{
+		htDelete (&sStringIntHashTable, apStrings[i]);
+	}
+	assert (htIsEmpty (&sStringIntHashTable),
+					"ht is empty after deleting all elements",
+				  "ht is NOT empty after deleting all elements");
+	assert (!htDelete (&sStringIntHashTable, NOT_INSERTED_KEY),
+					"Delete returns false when key not in table",
+					"Delete did NOT return false when key not in table");
 
 	//************************* Test htPrint *************************
 	//Check Visually
-	htPrint (&sTheHashTable);
-
-	//************************* Test htFind *************************
-	htFind (&sTheHashTable, "AKey10", &dataBuffer);
-	printf ("Found Data: %d\n\n", dataBuffer);
-
-	//************************* Test htUpdate *************************
-	htUpdate (&sTheHashTable, "MyKey2", &dupData);
-
-	//************************* Test htDelete *************************
-	htDelete (&sTheHashTable, "MyKey1");
-	htPrint (&sTheHashTable);
+	htPrint (&sIntStringHashTable, outFile);
 
 	//************************* Test htTerminate *************************
-	htTerminate (&sTheHashTable);
-	assert (htIsEmpty (&sTheHashTable), "ht is empty after termination",
-																			"ht is NOT empty after termination");
+	htTerminate (&sStringIntHashTable);
+	htTerminate (&sIntStringHashTable);
+	assert (htIsEmpty (&sStringIntHashTable) &&
+					htIsEmpty (&sIntStringHashTable),
+					"ht is empty after termination",
+					"ht is NOT empty after termination");
 
+	fclose (outFile);
 	return EXIT_SUCCESS;
 }

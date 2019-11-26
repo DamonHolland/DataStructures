@@ -174,7 +174,8 @@ bool htIsEmpty (HashTablePtr psHashTable)
  Returned:	 	bool        - True if the key/data pair was inserted, false
  	 	 	 	 	 	 	 	 	 	 	 	 	 	if not.
  *************************************************************************/
-bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData)
+bool htInsert (HashTablePtr psHashTable, const void* pKey,
+							const void* pData)
 {
 	//Error Checking
 	if (NULL == psHashTable || NULL == pKey || NULL == pData)
@@ -237,7 +238,7 @@ bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData)
  Returned:	 	bool        - True if the key/data pair was deleted, false
  	 	 	 	 	 	 	 	 	 	 	 	 	 	if not.
  *************************************************************************/
-bool htDelete (HashTablePtr psHashTable, void* pKey)
+bool htDelete (HashTablePtr psHashTable, const void* pKey)
 {
 	//Error Checking
 	if (NULL == psHashTable || NULL == pKey)
@@ -292,7 +293,8 @@ bool htDelete (HashTablePtr psHashTable, void* pKey)
  Returned:	 	bool        - True if the key/data pair was updated, false
  	 	 	 	 	 	 	 	 	 	 	 	 	 	if not.
  *************************************************************************/
-bool htUpdate (HashTablePtr psHashTable, void* pKey, void* pData)
+bool htUpdate (HashTablePtr psHashTable, const void* pKey,
+							 const void* pData)
 {
 	//Error Checking
 	if (NULL == psHashTable || NULL == pKey || NULL == pData)
@@ -345,7 +347,8 @@ bool htUpdate (HashTablePtr psHashTable, void* pKey, void* pData)
  Returned:	 	bool        - True if the key was found and data returned,
   													false if not
  *************************************************************************/
-bool htFind (HashTablePtr psHashTable, void* pKey, void* pBuffer)
+bool htFind (HashTablePtr psHashTable, const void* pKey,
+						 void* pBuffer)
 {
 	//Error Checking
 	if (NULL == psHashTable || NULL == pKey)
@@ -395,7 +398,7 @@ bool htFind (HashTablePtr psHashTable, void* pKey, void* pBuffer)
 
  Returned:	  None
  *************************************************************************/
-void htPrint(HashTablePtr psHashTable)
+void htPrint(HashTablePtr psHashTable, FILE* pOutStream)
 {
 	//Error Checking
 	if (NULL == psHashTable)
@@ -416,8 +419,8 @@ void htPrint(HashTablePtr psHashTable)
 			{
 				lstPeek (&psHashTable->bucket[i], &currentElement,
 						 	 	 sizeof (currentElement));
-				printf ("Bucket: %d | ", i);
-				psHashTable->pPrintFunction (&currentElement.pKey,
+				fprintf (pOutStream, "Bucket: %d | ", i);
+				psHashTable->pPrintFunction (pOutStream, &currentElement.pKey,
 																		 psHashTable->keySize,
 																		 &currentElement.pData,
 																		 psHashTable->dataSize);

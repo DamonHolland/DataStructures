@@ -13,6 +13,7 @@ Purpose:    Interface for a hash table
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "../../GenericDynamicList/include/list.h"
 
 //*************************************************************************
@@ -36,9 +37,11 @@ strcpy (gszHTErrors[HT_NO_BUFFER_ERROR], "Error: No Buffer.");
 //*************************************************************************
 // User-defined types
 //*************************************************************************
-typedef int (*hashFunction)(void* pKey, int keySize);
-typedef int (*cmpFunction)(void* pKey1, void* pKey2, int keySize);
-typedef void (*printFunction)(void* pKey, int keySize, void* pData,
+typedef uint32_t (*hashFunction)(const void* pKey, int keySize);
+typedef int (*cmpFunction)(const void* pKey1, const void* pKey2,
+													 int keySize);
+typedef void (*printFunction)(FILE* pOutStream, const void* pKey,
+															int keySize, const void* pData,
 															int dataSize);
 
 typedef struct HashTableElement* HashTableElementPtr;
@@ -77,14 +80,17 @@ extern void htTerminate (HashTablePtr psHashTable);
 
 extern bool htIsEmpty (HashTablePtr psHashTable);
 
-extern bool htInsert (HashTablePtr psHashTable, void* pKey, void* pData);
+extern bool htInsert (HashTablePtr psHashTable, const void* pKey,
+											const void* pData);
 
-extern bool htDelete (HashTablePtr psHashTable, void* pKey);
+extern bool htDelete (HashTablePtr psHashTable, const void* pKey);
 
-extern bool htUpdate (HashTablePtr psHashTable, void* pKey, void* pData);
+extern bool htUpdate (HashTablePtr psHashTable, const void* pKey,
+											const void* pData);
 
-extern bool htFind (HashTablePtr psHashTable, void* pKey, void* pBuffer);
+extern bool htFind (HashTablePtr psHashTable, const void* pKey,
+										void* pBuffer);
 
-extern void htPrint(HashTablePtr psHashTable);
+extern void htPrint(HashTablePtr psHashTable, FILE* pOutStream);
 
 #endif /* HT_H_ */
