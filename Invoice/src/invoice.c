@@ -4,7 +4,10 @@ Author:     Damon Holland
 Date:       Nov 25, 2019
 Class:      CS300
 Assignment: Hash Tables
-Purpose:    
+Purpose:    Driver for the invoice. Reads in conversions and items from a
+ 	 	 	 	 	 	text file and uses a hash table to store the information.
+ 	 	 	 	 	 	An invoice is created and written to a text file based on the
+ 	 	 	 	 	  actions given in another text file.
 **************************************************************************/
 #include "stdlib.h"
 #include "stdio.h"
@@ -28,7 +31,7 @@ typedef struct Item
  	 	 	 	 	 	 	keySize  - An integer that contains the size in bytes of the
  	 	 	 	 	 	 	 	 	 	 	 	 key
 
- Returned:	 	uint32_t - The hash value
+ Returned:	 	int      - The hash value
  ************************************************************************/
 int stringHash (const void* pKey, int keySize)
 {
@@ -63,7 +66,7 @@ int stringHash (const void* pKey, int keySize)
  	 	 	 	 	 	 	keySize  - An integer that contains the size in bytes of the
  	 	 	 	 	 	 	 	 	 	 	 	 key
 
- Returned:	 	uint32_t - The hash value
+ Returned:	 	int      - The hash value
  ************************************************************************/
 int intHash (const void* pKey, int keySize)
 {
@@ -188,7 +191,7 @@ void printIntItem (FILE* pOutStream, const void* pKey, int keySize,
 /*************************************************************************
  Function: 	 	main
 
- Description: Test all the functions of the hash table
+ Description: Driver for the invoice
 
  Parameters:	none
 
@@ -208,14 +211,16 @@ int main()
 
 	//Max string length constants
 	const int DENOM_LENGTH = 4;
+	const int ITEM_INFO_LENGTH = 10;
+	//Above constant must change to match Item struct
 
 	//Variables to store key/data pairs
 	char aDenom[DENOM_LENGTH];
 	double conversion;
 	int ID;
 	Item sItem;
-	char aManufacturer[10];
-	char aItemName[10];
+	char aManufacturer[ITEM_INFO_LENGTH];
+	char aItemName[ITEM_INFO_LENGTH];
 
 	//Variables to store actions
 	int givenID;
@@ -243,7 +248,7 @@ int main()
 	//******************** Fill the hash tables ********************
 	//Open and validate conversions file
 	pInFile = fopen (pCONVERSIONS_FILE, "r");
-	if(!pInFile)
+	if (!pInFile)
 	{
 		printf ("Error: Unable to open file\n");
 		exit (EXIT_FAILURE);
@@ -251,14 +256,14 @@ int main()
 	//Read from file and fill conversions table, the close file
 	while (!feof (pInFile))
 	{
-		fscanf(pInFile, "%s %lf", aDenom, &conversion);
+		fscanf (pInFile, "%s %lf", aDenom, &conversion);
 		htInsert (&sConversionsTable, &aDenom, &conversion);
 	}
 	fclose (pInFile);
 
 	//Open and validate items file
 	pInFile = fopen (pITEMS_FILE, "r");
-	if(!pInFile)
+	if (!pInFile)
 	{
 		printf ("Error: Unable to open file\n");
 		exit (EXIT_FAILURE);
@@ -266,7 +271,7 @@ int main()
 	//Read from file and fill items table, then close file
 	while (!feof (pInFile))
 	{
-		fscanf(pInFile, "%d %s %s ", &ID,  aItemName, aManufacturer);
+		fscanf (pInFile, "%d %s %s ", &ID,  aItemName, aManufacturer);
 		strcpy (sItem.itemName, aItemName);
 		strcpy (sItem.manufacturer , aManufacturer);
 		htInsert (&sItemsTable, &ID, &sItem);
@@ -276,14 +281,14 @@ int main()
 	//******************* Read actions and print results ********************
 	//Open and validate actions file
 	pInFile = fopen (pACTIONS_FILE, "r");
-	if(!pInFile)
+	if (!pInFile)
 	{
 		printf ("Error: Unable to open file\n");
 		exit (EXIT_FAILURE);
 	}
 	//Open and validate invoice file
 	pOutFile = fopen (pINVOICE_FILE, "w");
-	if(!pOutFile)
+	if (!pOutFile)
 	{
 		printf ("Error: Unable to open file\n");
 		exit (EXIT_FAILURE);

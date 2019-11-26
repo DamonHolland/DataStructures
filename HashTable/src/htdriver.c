@@ -71,7 +71,7 @@ static void assert (bool bExpression, char *pTrue, char *pFalse)
  	 	 	 	 	 	 	keySize  - An integer that contains the size in bytes of the
  	 	 	 	 	 	 	 	 	 	 	 	 key
 
- Returned:	 	uint32_t - The hash value
+ Returned:	 	int      - The hash value
  ************************************************************************/
 int stringHash (const void* pKey, int keySize)
 {
@@ -106,17 +106,16 @@ int stringHash (const void* pKey, int keySize)
  	 	 	 	 	 	 	keySize  - An integer that contains the size in bytes of the
  	 	 	 	 	 	 	 	 	 	 	 	 key
 
- Returned:	 	uint32_t - The hash value
+ Returned:	 	int      - The hash value
  ************************************************************************/
 int intHash (const void* pKey, int keySize)
 {
-	uint32_t hash;
-	int key;
+	int hash, key;
 
 	memcpy (&key, pKey, keySize);
 
-	hash = key * key;
-	hash = (hash & 0x000ff000) >> 12;
+	key *= key;
+	hash = (key & 0x000ff000) >> 12;
 
 	return hash;
 }

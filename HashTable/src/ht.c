@@ -378,9 +378,12 @@ bool htFind (HashTablePtr psHashTable, const void* pKey,
 /**************************************************************************
  Function: 	 	htPrint
 
- Description: Prints the given hash table.
+ Description: Prints the given key/data pair in a hash table
 
  Parameters:	psHashTable - Pointer to the hash table to print.
+ 	 	 	 	 	 	 	pKey        - Pointer to the key to the key/data pair to
+ 	 	 	 	 	 	 								print
+ 	 	 	 	 	 	 	pOutStream  - Pointer to the output stream to print to
 
  Returned:	  None
  *************************************************************************/
